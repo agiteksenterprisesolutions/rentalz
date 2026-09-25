@@ -1,0 +1,589 @@
+// TheRentalz — MySQL schema (Prisma 7)
+// Replaces the legacy Laravel tables. Legacy table names are noted on each model.
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+// ─────────────────────────────────────────────────────────────
+// ENUMS
+// ─────────────────────────────────────────────────────────────
+
+enum UserRole {
+  ADMIN
+  MODERATOR
+  USER
+}
+
+enum UserStatus {
+  PENDING
+  ACTIVE
+  INACTIVE
+  BLOCKED
+}
+
+// legacy adds.add_type: rent | sell | premium | rest(product)
+enum AdType {
+  RENT
+  SELL
+  PREMIUM
+  PRODUCT
+}
+
+// legacy adds.status used 0/1/2/4 inconsistently — now explicit
+enum AdStatus {
+  DRAFT
+  PENDING
+  APPROVED
+  REJECTED
+  EXPIRED
+  SOLD
+}
+
+enum OperatorOption {
+  WITH_OPERATOR
+  WITHOUT_OPERATOR
+  BOTH
+}
+
+enum AdEventType {
+  VIEW
+  SEARCH_IMPRESSION
+  PHONE_CLICK
+  WHATSAPP_CLICK
+}
+
+enum OrderStatus {
+  PENDING
+  PAID
+  FAILED
+  REFUNDED
+}
+
+enum CreditSource {
+  PURCHASE
+  FREE
+  ADMIN
+}
+
+enum PackageDurationUnit {
+  DAY
+  MONTH
+}
+
+// ─────────────────────────────────────────────────────────────
+// AUTH & USERS  (legacy: users, profiles)
+// ─────────────────────────────────────────────────────────────
+
+model User {
+  id String @id @default(uuid())
+
+  name  String
+  email String  @unique @db.VarChar(191)
+  phone String? @db.VarChar(20)
+
+  passwordHash String? // null for OAuth-only accounts
+
+  role   UserRole   @default(USER)
+  status UserStatus @default(PENDING)
+
+  emailVerified           Boolean   @default(false)
+  emailVerificationTokenHash String?   @unique @db.Char(64) // sha256 of the JWT, never the raw token
+  emailVerificationExpiry    DateTime?
+  passwordResetTokenHash     String?   @unique @db.Char(64)
+  passwordResetExpiry        DateTime?
+
+  // Ad credits live in AdCreditLot (legacy users.no_of_ads / remaining_ads / user_status)
+  creditLots AdCreditLot[]
+
+  // OAuth (legacy provider / provider_id / google_id)
+  provider   String? @db.VarChar(30)
+  providerId String? @db.VarChar(191)
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime? // soft delete
+
+  profile       Profile?
+  refreshTokens RefreshToken[]
+  emailChange   EmailChangeRequest?
+  socialCodes   SocialLoginCode[]
+  ads           Ad[]           @relation("AdOwner")
+  createdAds    Ad[]           @relation("AdCreator")
+  favourites    Favourite[]
+  savedSearches SavedSearch[]
+  adEvents      AdEvent[]
+  orders        Order[]
+  cart          Cart?
+  auditLogs     AuditLog[]
+
+  @@unique([provider, providerId])
+  @@index([role, status])
+}
+
+model Profile {
+  userId String @id
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  firstName        String?
+  lastName         String?
+  aboutMe          String?   @db.Text
+  organizationName String?
+  avatarKey        String?   @db.VarChar(255) // R2 object key
+  birthday         DateTime? @db.Date
+  gender           String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// A pending "change my email" request: the new address must click the link before it replaces the old one.
+model EmailChangeRequest {
+  userId String @id
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  newEmail  String   @db.VarChar(191)
+  tokenHash String   @unique @db.Char(64) // sha256 of the emailed token
+  expiresAt DateTime
+
+  createdAt DateTime @default(now())
+}
+
+// One-time code handed to the frontend after a Google / Facebook sign-in (the browser trades it for cookies).
+// Short-lived (about a minute), single use, stored as a hash.
+model SocialLoginCode {
+  id        String   @id @default(cuid())
+  codeHash  String   @unique @db.Char(64)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([expiresAt])
+}
+
+model RefreshToken {
+  id        String @id @default(cuid())
+  tokenHash String @unique @db.Char(64) // sha256 of the refresh JWT
+  userId    String
+  user      User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  expiresAt DateTime
+  ip        String? @db.VarChar(45)
+  userAgent String? @db.VarChar(255)
+
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([expiresAt])
+}
+
+// ─────────────────────────────────────────────────────────────
+// RBAC
+// ─────────────────────────────────────────────────────────────
+
+model Permission {
+  id          String  @id @default(cuid())
+  name        String  @unique // resource:action e.g. ad:approve
+  description String?
+
+  roles RolePermission[]
+}
+
+model RolePermission {
+  role         UserRole
+  permissionId String
+  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@id([role, permissionId])
+}
+
+// ─────────────────────────────────────────────────────────────
+// CATALOG  (legacy: states, categories, makes)
+// ─────────────────────────────────────────────────────────────
+
+// legacy `states` = UAE emirates / cities
+model City {
+  id   Int    @id @default(autoincrement())
+  name String @unique
+  slug String @unique
+
+  ads Ad[]
+}
+
+// 3-level tree: main (level 1) → sub (2) → sub-sub (3). Legacy: categories(parent_id, level, cat_slug, image)
+model Category {
+  id       Int       @id @default(autoincrement())
+  title    String
+  slug     String    @unique
+  level    Int       @default(1) // 1, 2 or 3
+  parentId Int?
+  parent   Category? @relation("CategoryTree", fields: [parentId], references: [id], onDelete: Restrict)
+  children Category[] @relation("CategoryTree")
+
+  imageKey      String? @db.VarChar(255) // R2 object key
+  isPopular     Boolean @default(false) // homepage "Most Popular Categories" (was hard-coded IDs 81-88)
+  sortOrder     Int     @default(0)
+  isActive      Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  adsMain Ad[] @relation("AdMainCategory")
+  adsSub  Ad[] @relation("AdSubCategory")
+  adsLeaf Ad[] @relation("AdLeafCategory")
+
+  @@index([parentId])
+  @@index([level, isActive])
+}
+
+model Make {
+  id   Int    @id @default(autoincrement())
+  name String @unique
+
+  ads Ad[]
+}
+
+// ─────────────────────────────────────────────────────────────
+// ADS  (legacy: adds, photos, images)
+// ─────────────────────────────────────────────────────────────
+
+model Ad {
+  id   String @id @default(uuid())
+  slug String @unique
+
+  // ownership — legacy assign_ad(): admin can reassign, previous owner kept in creator
+  userId    String
+  user      User   @relation("AdOwner", fields: [userId], references: [id])
+  creatorId String
+  creator   User   @relation("AdCreator", fields: [creatorId], references: [id])
+
+  type   AdType
+  status AdStatus @default(PENDING)
+
+  title       String   @db.VarChar(255)
+  description String?  @db.Text
+  phone       String?  @db.VarChar(20)
+
+  // classification
+  mainCategoryId Int?
+  mainCategory   Category? @relation("AdMainCategory", fields: [mainCategoryId], references: [id])
+  subCategoryId  Int?
+  subCategory    Category? @relation("AdSubCategory", fields: [subCategoryId], references: [id])
+  leafCategoryId Int?
+  leafCategory   Category? @relation("AdLeafCategory", fields: [leafCategoryId], references: [id])
+  cityId         Int?
+  city           City?     @relation(fields: [cityId], references: [id])
+  makeId         Int?
+  make           Make?     @relation(fields: [makeId], references: [id])
+
+  // specs
+  model        String?        @db.VarChar(100)
+  modelYear    Int?
+  capacity     String?        @db.VarChar(100)
+  operator     OperatorOption?
+  insurance    Boolean?
+  warranty     Boolean?
+  fuelType     String?        @db.VarChar(50)
+  transportation Boolean?
+  terms        String?        @db.Text
+
+  // pricing (AED by default). `price` = lowest of the entered prices, used for sorting/filtering
+  currency     String   @default("AED") @db.VarChar(3)
+  price        Decimal  @db.Decimal(12, 2)
+  dailyPrice   Decimal? @db.Decimal(12, 2)
+  weeklyPrice  Decimal? @db.Decimal(12, 2)
+  monthlyPrice Decimal? @db.Decimal(12, 2)
+
+  // location
+  address   String? @db.VarChar(255)
+  latitude  Decimal? @db.Decimal(10, 7)
+  longitude Decimal? @db.Decimal(10, 7)
+
+  // promotion
+  isFeatured    Boolean   @default(false)
+  featuredUntil DateTime? // null while featured = featured until an admin removes it
+  priority      Int       @default(0) // featured carousel order (lower = first)
+
+  // publishing window (set on approval from the package duration)
+  publishedAt DateTime?
+  expiresAt   DateTime?
+
+  moderationNote String? @db.VarChar(500) // reason shown when rejected
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  photos      AdPhoto[]
+  favourites  Favourite[]
+  events      AdEvent[]
+
+  // Listing pages filter status + type and sort by newest/price
+  @@index([status, type, createdAt])
+  @@index([status, price])
+  @@index([status, cityId])
+  @@index([status, mainCategoryId, subCategoryId, leafCategoryId])
+  @@index([status, isFeatured, priority])
+  @@index([isFeatured, featuredUntil])
+  @@index([status, expiresAt])
+  @@index([userId])
+  @@index([makeId])
+  @@fulltext([title, description])
+}
+
+model AdPhoto {
+  id       String @id @default(cuid())
+  adId     String
+  ad       Ad     @relation(fields: [adId], references: [id], onDelete: Cascade)
+
+  key      String @db.VarChar(255) // R2 object key; public URL = R2_PUBLIC_URL + key
+  position Int    @default(0)
+
+  createdAt DateTime @default(now())
+
+  @@index([adId, position])
+}
+
+// ─────────────────────────────────────────────────────────────
+// BUYER ENGAGEMENT  (legacy: favourites, my_searches, add__search__statuses)
+// ─────────────────────────────────────────────────────────────
+
+model Favourite {
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  adId   String
+  ad     Ad     @relation(fields: [adId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@id([userId, adId])
+}
+
+// Legacy stored one row per (user, ad) seen in search results. Now a real saved search: the filters of GET /ads.
+model SavedSearch {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  name    String? @db.VarChar(120)
+  filters Json // query-string filters of GET /ads, e.g. { q, type, city, category, minPrice, maxPrice }
+
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+}
+
+// Analytics events: detail views, search impressions, contact clicks
+model AdEvent {
+  id     BigInt      @id @default(autoincrement())
+  adId   String
+  ad     Ad          @relation(fields: [adId], references: [id], onDelete: Cascade)
+  userId String?
+  user   User?       @relation(fields: [userId], references: [id], onDelete: SetNull)
+  type   AdEventType
+
+  createdAt DateTime @default(now())
+
+  @@index([adId, type, createdAt])
+}
+
+// ─────────────────────────────────────────────────────────────
+// PLANS & PAYMENTS  (legacy: package_categories, packages, carts, subscriptions, user_payment_details)
+// ─────────────────────────────────────────────────────────────
+
+model PackageCategory {
+  id       Int    @id @default(autoincrement())
+  title    String
+  sortOrder Int   @default(0)
+
+  packages Package[]
+}
+
+model Package {
+  id         Int             @id @default(autoincrement())
+  categoryId Int
+  category   PackageCategory @relation(fields: [categoryId], references: [id])
+
+  name     String
+  details  String? @db.Text
+  adCount  Int // ads included
+  durationValue Int @default(30)
+  durationUnit  PackageDurationUnit @default(DAY)
+  amount   Decimal @db.Decimal(10, 2)
+  currency String  @default("AED") @db.VarChar(3)
+
+  // legacy extras: no_of_views, f_days (featured days), online_payment, customer_care, analytics
+  featuredDays  Int     @default(0)
+  hasAnalytics  Boolean @default(false)
+  hasSupport    Boolean @default(false)
+  isActive      Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  cartItems  CartItem[]
+  orderItems OrderItem[]
+
+  @@index([categoryId, isActive])
+}
+
+// One cart per user (legacy keyed by PHP session id, wiped daily)
+model Cart {
+  userId String @id
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  items CartItem[]
+
+  updatedAt DateTime @updatedAt
+}
+
+model CartItem {
+  id     String @id @default(cuid())
+  cartId String
+  cart   Cart   @relation(fields: [cartId], references: [userId], onDelete: Cascade)
+
+  packageId Int
+  package   Package @relation(fields: [packageId], references: [id])
+
+  quantity Int @default(1)
+
+  @@unique([cartId, packageId])
+}
+
+// Prices are always re-computed server-side from Package.amount at checkout
+model Order {
+  id     String @id @default(uuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  status   OrderStatus @default(PENDING)
+  total    Decimal     @db.Decimal(10, 2)
+  currency String      @default("AED") @db.VarChar(3)
+
+  // Stripe
+  stripeSessionId       String? @unique
+  stripePaymentIntentId String? @unique
+  stripeCustomerId      String?
+  paidAt                DateTime?
+  refundedAt            DateTime?
+  stripeRefundId        String?   @db.VarChar(255)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  items OrderItem[]
+
+  @@index([userId, status])
+}
+
+model OrderItem {
+  id      String @id @default(cuid())
+  orderId String
+  order   Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  packageId Int
+  package   Package @relation(fields: [packageId], references: [id])
+
+  quantity  Int
+  unitPrice Decimal @db.Decimal(10, 2) // snapshot at purchase time
+  adCredits Int // ads granted = package.adCount * quantity
+
+  // snapshots of the package terms at purchase time, applied to each ad published with these credits
+  featuredDays Int @default(0)
+  durationDays Int @default(30)
+
+  creditLots AdCreditLot[]
+
+  @@index([orderId])
+}
+
+// Ad credits, one row per grant. Approving an ad consumes one credit from the oldest lot with credits left,
+// and the lot decides how long the ad runs and for how many days it is featured.
+model AdCreditLot {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  source      CreditSource
+  orderItemId String?
+  orderItem   OrderItem?   @relation(fields: [orderItemId], references: [id], onDelete: SetNull)
+
+  granted   Int
+  remaining Int
+  featuredDays Int @default(0)
+  durationDays Int @default(30)
+
+  createdAt DateTime @default(now())
+
+  @@index([userId, remaining, createdAt])
+  @@index([orderItemId])
+}
+
+// ─────────────────────────────────────────────────────────────
+// SITE CONTENT  (legacy: contacts, insurances, metas)
+// ─────────────────────────────────────────────────────────────
+
+model Contact {
+  id      String  @id @default(cuid())
+  name    String
+  email   String
+  message String  @db.Text
+  isRead  Boolean @default(false)
+
+  createdAt DateTime @default(now())
+
+  @@index([isRead, createdAt])
+}
+
+// Insurance quote leads (legacy insurances table — captured but never used)
+model InsuranceLead {
+  id String @id @default(cuid())
+
+  city              String
+  make              String
+  model             String?
+  yearManufacturing Int?
+  currentlyInsured  String?
+  vehicleValue      Decimal? @db.Decimal(12, 2)
+  insuranceType     String?
+  claimHistory      String?
+
+  firstName   String
+  lastName    String?
+  email       String
+  mobile      String
+  dateOfBirth DateTime? @db.Date
+  nationality String?
+
+  createdAt DateTime @default(now())
+}
+
+// Key/value site settings + per-page SEO (legacy metas: title / description / keywords)
+model Setting {
+  key   String @id
+  value Json
+
+  updatedAt DateTime @updatedAt
+}
+
+model AuditLog {
+  id       BigInt  @id @default(autoincrement())
+  userId   String?
+  user     User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
+  action   String  @db.VarChar(64) // e.g. ad:approve
+  entity   String  @db.VarChar(64)
+  entityId String?
+  meta     Json?
+  ip       String? @db.VarChar(45)
+
+  createdAt DateTime @default(now())
+
+  @@index([entity, entityId])
+  @@index([userId, createdAt])
+}

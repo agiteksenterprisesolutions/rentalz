@@ -1,0 +1,409 @@
+/*
+ * Reusable component classes built from the tokens. Pseudo-classes (hover, focus-visible, active, disabled,
+ * checked, aria-*) live here so pages only write class="btn btn-primary".
+ * Every class also composes with Tailwind utilities and breakpoint prefixes: class="btn btn-primary w-full md:w-auto".
+ */
+
+@layer components {
+  /* ── Layout ───────────────────────────────────────────────────────────── */
+
+  /* Centred page container: 20px margins on mobile, 32px on tablet, 48px on desktop, max 1440px */
+  .container-page {
+    @apply mx-auto w-full max-w-page px-margin-mobile md:px-8 xl:px-margin;
+  }
+
+  /* 4 / 8 / 12 column grid with 16 / 20 / 24px gutters. Children span with col-span-*. */
+  .grid-page {
+    @apply grid grid-cols-4 gap-x-gutter-mobile md:grid-cols-8 md:gap-x-5 xl:grid-cols-12 xl:gap-x-gutter;
+  }
+
+  .section {
+    @apply py-space-xl xl:py-space-2xl;
+  }
+
+  /* ── Buttons ──────────────────────────────────────────────────────────── */
+
+  .btn {
+    @apply inline-flex h-12 cursor-pointer select-none items-center justify-center gap-2 rounded-xl border border-transparent px-space-lg
+      font-display text-sm font-bold whitespace-nowrap no-underline transition duration-150 ease-soft;
+
+    &:focus-visible {
+      @apply outline-none shadow-focus ring-2 ring-amber-deep ring-offset-2 ring-offset-canvas;
+    }
+    &:active:not(:disabled, [aria-disabled="true"]) {
+      @apply translate-y-px;
+    }
+    &:disabled,
+    &[aria-disabled="true"] {
+      @apply pointer-events-none opacity-45;
+    }
+    & > svg {
+      @apply size-4 shrink-0;
+    }
+  }
+
+  .btn-primary {
+    @apply bg-amber text-on-amber;
+
+    &:hover {
+      @apply bg-amber-deep;
+    }
+  }
+
+  /* The "ink" button: neutral-900 fill with white text in light mode, and the reverse in dark mode */
+  .btn-secondary {
+    @apply bg-neutral-900 text-white;
+
+    &:hover {
+      @apply border-amber bg-neutral-900/85;
+    }
+  }
+
+  .btn-ghost {
+    @apply border-neutral-200 bg-transparent text-neutral-900;
+
+    &:hover {
+      @apply bg-neutral-900/[0.03];
+    }
+  }
+
+  .btn-danger {
+    @apply bg-error text-on-error;
+
+    &:hover {
+      @apply bg-error/90;
+    }
+  }
+
+  .btn-sm {
+    @apply h-10 px-4 text-[13px];
+  }
+  .btn-lg {
+    @apply h-14 px-8 text-base;
+  }
+  .btn-icon {
+    @apply size-12 px-0;
+  }
+  .btn-icon.btn-sm {
+    @apply size-10 px-0;
+  }
+  .btn-block {
+    @apply w-full;
+  }
+
+  /* Ghost button placed on a dark surface: class="btn btn-ghost-inverse" */
+  .btn-ghost-inverse {
+    @apply border-white/20 bg-transparent text-white;
+
+    &:hover {
+      @apply border-amber bg-white/5;
+    }
+  }
+
+  /* ── Links ────────────────────────────────────────────────────────────── */
+
+  .link {
+    @apply cursor-pointer font-medium text-primary underline decoration-amber decoration-2 underline-offset-4 transition-colors;
+
+    &:hover {
+      @apply text-neutral-900 decoration-amber-deep;
+    }
+    &:focus-visible {
+      @apply rounded-sm;
+    }
+  }
+
+  /* ── Cards ────────────────────────────────────────────────────────────── */
+
+  .card {
+    @apply rounded-2xl border border-neutral-200 bg-white p-space-md shadow-resting;
+  }
+
+  /* Whole card is a link or button: lifts and its hairline turns ochre */
+  .card-interactive {
+    @apply cursor-pointer transition duration-200 ease-soft;
+
+    &:hover,
+    &:focus-within {
+      @apply border-amber-deep shadow-hover;
+    }
+    &:hover {
+      @apply -translate-y-0.5;
+    }
+  }
+
+  .card-dark {
+    @apply rounded-3xl border border-white/[0.08] bg-charcoal p-space-lg text-white;
+
+    &.card-interactive:hover,
+    &.card-interactive:focus-within {
+      @apply border-amber-deep;
+    }
+  }
+
+  /* Image well: off-white cut-out ground for machinery photos */
+  .card-media {
+    @apply relative aspect-[4/3] overflow-hidden rounded-xl bg-surface-container-low;
+
+    & > img {
+      @apply size-full object-cover;
+    }
+  }
+
+  /* Floating panels: modals, inspection drawers */
+  .panel-floating {
+    @apply rounded-3xl border border-neutral-200 bg-white/85 shadow-floating backdrop-blur-frost;
+  }
+  .scrim {
+    @apply fixed inset-0 bg-charcoal/50 backdrop-blur-sm;
+  }
+
+  /* ── Badges and status pills ──────────────────────────────────────────── */
+
+  .pill {
+    @apply inline-flex h-7 items-center gap-1.5 rounded-pill border border-neutral-200 bg-canvas px-3
+      font-mono text-[11px] leading-none font-bold tracking-[0.05em] whitespace-nowrap text-neutral-900 uppercase;
+
+    &.pill-sm {
+      @apply h-6 px-2.5;
+    }
+  }
+  /* Available, active, verified */
+  .pill-available {
+    @apply border-amber/40 bg-amber/15 text-amber-ink;
+  }
+  /* Small dot before the label, e.g. live availability */
+  .pill-dot::before {
+    content: "";
+    @apply size-1.5 rounded-full bg-current;
+  }
+  .pill-dark {
+    @apply border-transparent bg-neutral-900 text-white;
+  }
+  .pill-danger {
+    @apply border-error/30 bg-error-container text-on-error-container;
+  }
+
+  /* ── Form controls ────────────────────────────────────────────────────── */
+
+  .label {
+    @apply mb-space-sm block font-display text-[13px] font-semibold text-neutral-900;
+  }
+  .field-hint {
+    @apply mt-space-sm block font-mono text-label-mono-md text-neutral-700 uppercase;
+  }
+  .field-error {
+    @apply mt-space-sm block text-body-sm text-error;
+  }
+
+  .input,
+  .select,
+  .textarea {
+    @apply h-12 w-full rounded-xl border-[1.5px] border-neutral-200 bg-white px-4 font-body text-body-md text-neutral-900 transition duration-150;
+
+    &::placeholder {
+      @apply text-neutral-400;
+    }
+    &:hover:not(:disabled, :focus) {
+      @apply border-outline-variant;
+    }
+    &:focus {
+      @apply border-amber shadow-focus outline-none;
+    }
+    &:disabled {
+      @apply cursor-not-allowed bg-surface-container-low text-neutral-400;
+    }
+    /* Set aria-invalid="true" on the control (and render a .field-error) */
+    &[aria-invalid="true"] {
+      @apply border-error;
+    }
+    &[aria-invalid="true"]:focus {
+      box-shadow: 0 0 0 3px rgb(186 26 26 / 0.15);
+    }
+    &:read-only:not(select) {
+      @apply bg-surface-container-low;
+    }
+  }
+  .textarea {
+    @apply h-auto min-h-28 py-3;
+  }
+  .select {
+    @apply cursor-pointer appearance-none bg-no-repeat pr-10;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2317150F' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-position: right 0.875rem center;
+    background-size: 1rem;
+  }
+
+  /* Input with a monospaced unit, e.g. <div class="input-group"><input class="input"><span class="input-affix">AED / DAY</span></div> */
+  .input-group {
+    @apply relative;
+
+    & > .input {
+      @apply pr-24;
+    }
+  }
+  .input-affix {
+    @apply pointer-events-none absolute inset-y-0 right-4 flex items-center font-mono text-label-mono-md text-neutral-700 uppercase;
+  }
+
+  /* Checkbox: 20px, 6px corners. Checked = charcoal fill with an amber tick. */
+  .checkbox {
+    @apply size-5 shrink-0 cursor-pointer appearance-none rounded-[6px] border-[1.5px] border-neutral-200 bg-white bg-center bg-no-repeat transition duration-150;
+    background-size: 14px;
+
+    &:hover:not(:disabled) {
+      @apply border-outline-variant;
+    }
+    &:checked {
+      @apply border-charcoal bg-charcoal;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23FBB817' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m5 12 5 5L20 7'/%3E%3C/svg%3E");
+    }
+    &:indeterminate {
+      @apply border-charcoal bg-charcoal;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23FBB817' stroke-width='3.5' stroke-linecap='round'%3E%3Cpath d='M6 12h12'/%3E%3C/svg%3E");
+    }
+    &:focus-visible {
+      @apply border-amber shadow-focus outline-none;
+    }
+    &:disabled {
+      @apply cursor-not-allowed opacity-45;
+    }
+  }
+
+  /* Radio: circle, charcoal when checked with an amber dot */
+  .radio {
+    @apply size-5 shrink-0 cursor-pointer appearance-none rounded-full border-[1.5px] border-neutral-200 bg-white transition duration-150;
+
+    &:hover:not(:disabled) {
+      @apply border-outline-variant;
+    }
+    &:checked {
+      @apply border-charcoal bg-charcoal;
+      background-image: radial-gradient(circle, #fbb817 0 34%, transparent 38%);
+    }
+    &:focus-visible {
+      @apply border-amber shadow-focus outline-none;
+    }
+    &:disabled {
+      @apply cursor-not-allowed opacity-45;
+    }
+  }
+
+  /* Label + checkbox/radio side by side */
+  .check-row {
+    @apply flex cursor-pointer items-center gap-3 text-body-md;
+
+    &:has(:disabled) {
+      @apply cursor-not-allowed opacity-70;
+    }
+  }
+
+  /* ── Segmented control and tabs ───────────────────────────────────────── */
+
+  .segmented {
+    @apply inline-flex gap-1 rounded-xl bg-surface-container p-1;
+  }
+  .segmented-item {
+    @apply inline-flex h-10 cursor-pointer items-center justify-center rounded-lg px-5 font-display text-sm font-semibold text-neutral-900 transition duration-150;
+
+    &:hover:not([aria-selected="true"], :disabled) {
+      @apply bg-white;
+    }
+    &[aria-selected="true"],
+    &[aria-current="page"] {
+      @apply bg-neutral-900 text-white;
+    }
+    &:focus-visible {
+      @apply outline-none ring-2 ring-amber-deep ring-offset-2 ring-offset-surface-container;
+    }
+    &:disabled {
+      @apply cursor-not-allowed opacity-45;
+    }
+  }
+
+  /* ── Global fleet search bar (hero) ───────────────────────────────────── */
+
+  .search-bar {
+    @apply flex flex-col gap-2 rounded-2xl border border-neutral-200 bg-white p-2 shadow-resting md:flex-row md:items-stretch;
+
+    &:focus-within {
+      @apply border-amber shadow-focus;
+    }
+  }
+  .search-bar-field {
+    @apply flex min-w-0 flex-1 flex-col justify-center rounded-xl px-4 py-2 transition-colors hover:bg-canvas md:border-r md:border-neutral-200 md:last:border-r-0;
+
+    & > label {
+      @apply font-mono text-label-mono-sm text-neutral-700 uppercase;
+    }
+    & :is(input, select) {
+      @apply w-full border-0 bg-transparent p-0 font-body text-body-md text-neutral-900 outline-none placeholder:text-neutral-400;
+    }
+  }
+
+  /* ── Spec sheet ───────────────────────────────────────────────────────── */
+
+  /* Tabular rows: spec name left, engineering value right, alternating grounds */
+  .spec-table {
+    @apply overflow-hidden rounded-2xl border border-neutral-200 bg-white;
+  }
+  .spec-row {
+    @apply flex items-baseline justify-between gap-4 border-b border-neutral-200 px-4 py-3 last:border-b-0 odd:bg-canvas even:bg-white;
+  }
+  .spec-key {
+    @apply text-sm text-neutral-700;
+  }
+  .spec-value {
+    @apply text-right font-mono text-sm font-semibold text-neutral-900;
+  }
+
+  /* Inline metric strip: MAX REACH 42M | 50 TON | CAT C13 (the bars are generated) */
+  .spec-strip {
+    @apply flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-label-mono-md text-neutral-700 uppercase;
+
+    & > * + *::before {
+      content: "|";
+      @apply mr-3 text-neutral-200;
+    }
+  }
+
+  /* Prices: <div class="price"><span class="price-amount">AED 500</span><span class="price-unit">/ day</span></div> */
+  .price {
+    @apply flex items-baseline gap-1.5 font-mono;
+  }
+  .price-amount {
+    @apply text-lg font-semibold text-neutral-900;
+  }
+  .price-unit {
+    @apply text-label-mono-md text-neutral-700 uppercase;
+  }
+  .card-dark .price-amount {
+    @apply text-amber;
+  }
+  .card-dark .price-unit {
+    @apply text-white/60;
+  }
+
+  /* ── Small helpers ────────────────────────────────────────────────────── */
+
+  .divider {
+    @apply h-px w-full border-0 bg-neutral-200;
+  }
+  .eyebrow {
+    @apply font-mono text-label-mono-md font-medium tracking-[0.16em] text-primary uppercase;
+  }
+  .card-dark .eyebrow,
+  .on-dark .eyebrow {
+    @apply text-amber;
+  }
+
+  /* Placeholder block while content loads */
+  .skeleton {
+    @apply animate-pulse rounded-xl bg-surface-container-high;
+  }
+
+  /* Visible only to screen readers */
+  .sr-only-focusable:not(:focus, :focus-within) {
+    @apply sr-only;
+  }
+}

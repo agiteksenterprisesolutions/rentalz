@@ -1,0 +1,32 @@
+@layer base {
+  html {
+    color-scheme: light;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    @apply bg-canvas font-body text-body-md text-neutral-900 antialiased;
+  }
+
+  ::selection {
+    @apply bg-amber/40 text-neutral-900;
+  }
+
+  /* One keyboard focus style for everything that is not a form control (those have their own halo) */
+  :where(a, button, summary, [tabindex]):focus-visible {
+    @apply outline-2 outline-offset-2 outline-amber-deep;
+  }
+
+  h1, h2, h3, h4 {
+    @apply text-balance;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}

@@ -1,0 +1,40 @@
+/*
+ * Type roles from design.md. Each `type-*` utility is the complete style: family, weight, tracking, and the
+ * smaller mobile size below the md breakpoint. Use them for headings and labels:
+ *   <h1 class="type-display-xl">  <p class="type-body-md">  <span class="type-label-mono-md">
+ * The raw `text-headline-md`, `text-body-sm` ... size tokens (see tokens.css) also work with any breakpoint prefix.
+ */
+
+@utility type-display-xl {
+  @apply font-display text-display-xl-mobile md:text-display-xl;
+}
+@utility type-headline-lg {
+  @apply font-display text-headline-lg-mobile md:text-headline-lg;
+}
+@utility type-headline-md {
+  @apply font-display text-headline-md;
+}
+@utility type-headline-sm {
+  @apply font-display text-headline-sm;
+}
+
+@utility type-body-lg {
+  @apply font-body text-body-lg;
+}
+@utility type-body-md {
+  @apply font-body text-body-md;
+}
+@utility type-body-sm {
+  @apply font-body text-body-sm;
+}
+
+/* Specs, prices, badges and status labels: monospaced, uppercase */
+@utility type-label-mono-lg {
+  @apply font-mono text-label-mono-lg uppercase;
+}
+@utility type-label-mono-md {
+  @apply font-mono text-label-mono-md uppercase;
+}
+@utility type-label-mono-sm {
+  @apply font-mono text-label-mono-sm uppercase;
+}

@@ -1,0 +1,185 @@
+/*
+ * Industrial Luxe design tokens (source: design.md).
+ * Everything lives in one Tailwind v4 @theme block, so each token is BOTH a utility
+ * (bg-primary, text-on-surface, rounded-card, shadow-hover, p-gutter, type-headline-lg ...)
+ * AND a plain CSS variable (var(--color-primary), var(--shadow-hover) ...) for raw CSS.
+ * Change a value here and the whole site follows.
+ */
+
+@theme {
+  /* Only the design system's colours exist: default Tailwind palettes are switched off. */
+  --color-*: initial;
+
+  --color-white: #ffffff;
+  --color-black: #000000;
+  --color-transparent: transparent;
+  --color-current: currentColor;
+
+  /* ── Semantic colours (design.md frontmatter, verbatim) ─────────────────── */
+  --color-surface: #fcf9f2;
+  --color-surface-dim: #dddad3;
+  --color-surface-bright: #fcf9f2;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container-low: #f6f3ec;
+  --color-surface-container: #f1eee6;
+  --color-surface-container-high: #ebe8e1;
+  --color-surface-container-highest: #e5e2db;
+  --color-surface-variant: #e5e2db;
+  --color-surface-tint: #7c5800;
+  --color-on-surface: #1c1c18;
+  --color-on-surface-variant: #504533;
+  --color-inverse-surface: #31312c;
+  --color-inverse-on-surface: #f4f0e9;
+  --color-outline: #827560;
+  --color-outline-variant: #d5c4ac;
+
+  --color-primary: #7c5800;
+  --color-on-primary: #ffffff;
+  --color-primary-container: #fbb817;
+  --color-on-primary-container: #6a4b00;
+  --color-inverse-primary: #febb1c;
+  --color-primary-fixed: #ffdea6;
+  --color-primary-fixed-dim: #febb1c;
+  --color-on-primary-fixed: #271900;
+  --color-on-primary-fixed-variant: #5e4200;
+
+  --color-secondary: #625e56;
+  --color-on-secondary: #ffffff;
+  --color-secondary-container: #e8e2d7;
+  --color-on-secondary-container: #68645c;
+  --color-secondary-fixed: #e8e2d7;
+  --color-secondary-fixed-dim: #ccc6bc;
+  --color-on-secondary-fixed: #1e1b15;
+  --color-on-secondary-fixed-variant: #4a463f;
+
+  --color-tertiary: #7d5700;
+  --color-on-tertiary: #ffffff;
+  --color-tertiary-container: #fab830;
+  --color-on-tertiary-container: #6b4a00;
+  --color-tertiary-fixed: #ffdeaa;
+  --color-tertiary-fixed-dim: #febb33;
+  --color-on-tertiary-fixed: #271900;
+  --color-on-tertiary-fixed-variant: #5f4100;
+
+  --color-error: #ba1a1a;
+  --color-on-error: #ffffff;
+  --color-error-container: #ffdad6;
+  --color-on-error-container: #93000a;
+
+  --color-background: #fcf9f2;
+  --color-on-background: #1c1c18;
+
+  /* ── Brand colours (design.md "Colors" prose) ───────────────────────────── */
+  --color-canvas: #fbfaf8; /* page background: warm architectural off-white */
+  --color-charcoal: #17150f; /* Charcoal Pitch: dark surfaces, footer, primary text */
+  --color-charcoal-hover: #2a271e;
+  --color-amber: #fbb817; /* machinery amber: primary calls to action and highlights */
+  --color-amber-deep: #d99b08; /* hover states and focused borders (not for text on white) */
+  --color-amber-ink: #926300; /* amber-family text on light backgrounds, 5:1 or better */
+
+  /* Text colours for fixed backgrounds. They never change with the theme (amber and charcoal stay the same in dark mode). */
+  --color-on-amber: #17150f;
+  --color-on-charcoal: #ffffff;
+
+  --color-neutral-50: #ffffff;
+  --color-neutral-100: #fbfaf8;
+  --color-neutral-200: #e9e6df; /* hairline borders and dividers */
+  --color-neutral-400: #9c988f; /* metadata and muted icons (decorative: below 4.5:1 on white) */
+  --color-neutral-700: #4a463d; /* sub-headlines and spec copy */
+  --color-neutral-900: #17150f; /* primary text */
+
+  /* ── Typography ─────────────────────────────────────────────────────────── */
+  /* The --font-* names below are set by next/font in app/layout.js */
+  --font-display: var(--font-space-grotesk), ui-sans-serif, system-ui, sans-serif;
+  --font-body: var(--font-work-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-work-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, "SFMono-Regular", Menlo, monospace;
+
+  /* Sizes also carry their line height, tracking and weight, so `text-headline-md` is the whole style. */
+  --text-display-xl: 3.5rem;
+  --text-display-xl--line-height: 4rem;
+  --text-display-xl--letter-spacing: -0.03em;
+  --text-display-xl--font-weight: 700;
+  --text-display-xl-mobile: 2.375rem;
+  --text-display-xl-mobile--line-height: 2.75rem;
+  --text-display-xl-mobile--letter-spacing: -0.02em;
+  --text-display-xl-mobile--font-weight: 700;
+
+  --text-headline-lg: 2.5rem;
+  --text-headline-lg--line-height: 3rem;
+  --text-headline-lg--letter-spacing: -0.025em;
+  --text-headline-lg--font-weight: 700;
+  --text-headline-lg-mobile: 1.75rem;
+  --text-headline-lg-mobile--line-height: 2.125rem;
+  --text-headline-lg-mobile--letter-spacing: -0.02em;
+  --text-headline-lg-mobile--font-weight: 700;
+
+  --text-headline-md: 1.75rem;
+  --text-headline-md--line-height: 2.25rem;
+  --text-headline-md--letter-spacing: -0.02em;
+  --text-headline-md--font-weight: 600;
+
+  --text-headline-sm: 1.25rem;
+  --text-headline-sm--line-height: 1.75rem;
+  --text-headline-sm--letter-spacing: -0.015em;
+  --text-headline-sm--font-weight: 600;
+
+  --text-body-lg: 1.125rem;
+  --text-body-lg--line-height: 1.75rem;
+  --text-body-lg--letter-spacing: -0.005em;
+  --text-body-lg--font-weight: 400;
+  --text-body-md: 0.9375rem;
+  --text-body-md--line-height: 1.5rem;
+  --text-body-md--letter-spacing: 0em;
+  --text-body-md--font-weight: 400;
+  --text-body-sm: 0.8125rem;
+  --text-body-sm--line-height: 1.25rem;
+  --text-body-sm--letter-spacing: 0em;
+  --text-body-sm--font-weight: 400;
+
+  --text-label-mono-lg: 0.875rem;
+  --text-label-mono-lg--line-height: 1.25rem;
+  --text-label-mono-lg--letter-spacing: 0.04em;
+  --text-label-mono-lg--font-weight: 600;
+  --text-label-mono-md: 0.75rem;
+  --text-label-mono-md--line-height: 1rem;
+  --text-label-mono-md--letter-spacing: 0.05em;
+  --text-label-mono-md--font-weight: 500;
+  --text-label-mono-sm: 0.625rem;
+  --text-label-mono-sm--line-height: 0.875rem;
+  --text-label-mono-sm--letter-spacing: 0.06em;
+  --text-label-mono-sm--font-weight: 500;
+
+  /* ── Shape ──────────────────────────────────────────────────────────────── */
+  /* Tailwind's own radius scale is kept (xl = 12px, 2xl = 16px, 3xl = 24px), which is what the brief's prose uses.
+     These names say what each is for. */
+  --radius-control: 0.75rem; /* buttons and inputs */
+  --radius-card: 1rem; /* light cards, media frames */
+  --radius-card-lg: 1.5rem; /* dark feature cards, modals, hero frames */
+  --radius-pill: 9999px; /* badges, tags, status indicators */
+
+  /* ── Spacing ────────────────────────────────────────────────────────────── */
+  /* p-gutter, gap-gutter, px-margin, py-space-2xl ... Page margins and gutters change by breakpoint in components.css. */
+  --spacing-gutter: 1.5rem;
+  --spacing-gutter-mobile: 1rem;
+  --spacing-margin: 3rem;
+  --spacing-margin-mobile: 1.25rem;
+  --spacing-space-xs: 0.25rem;
+  --spacing-space-sm: 0.5rem;
+  --spacing-space-md: 1rem;
+  --spacing-space-lg: 1.5rem;
+  --spacing-space-xl: 2.5rem;
+  --spacing-space-2xl: 4rem;
+
+  --container-page: 90rem; /* max-w-page = 1440px */
+
+  /* ── Elevation ──────────────────────────────────────────────────────────── */
+  --shadow-resting: 0 4px 20px -2px rgb(23 21 15 / 0.04), 0 2px 6px -1px rgb(23 21 15 / 0.02);
+  --shadow-hover: 0 16px 36px -4px rgb(23 21 15 / 0.08), 0 4px 12px -2px rgb(23 21 15 / 0.03);
+  --shadow-floating: 0 24px 48px -8px rgb(23 21 15 / 0.14);
+  --shadow-focus: 0 0 0 3px rgb(251 184 23 / 0.15); /* amber halo on focused fields */
+
+  --blur-frost: 16px;
+
+  --ease-soft: cubic-bezier(0.22, 1, 0.36, 1);
+}

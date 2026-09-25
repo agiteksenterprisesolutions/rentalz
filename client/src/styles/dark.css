@@ -1,0 +1,86 @@
+/*
+ * Dark theme. The site switches by setting data-theme="dark" on <html> (see ThemeToggle and the
+ * script in app/layout.js). Because every colour is a CSS variable from tokens.css, dark mode only has to
+ * redefine the variables that carry "surface" and "text" meaning; amber and charcoal stay the same.
+ */
+
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  --color-white: #1b1913; /* cards, inputs and other raised surfaces */
+  --color-canvas: #12110d; /* page background */
+  --color-neutral-50: #1b1913;
+  --color-neutral-100: #12110d;
+  --color-neutral-200: #302c23; /* hairlines */
+  --color-neutral-400: #857f72;
+  --color-neutral-700: #b8b2a4; /* secondary text */
+  --color-neutral-900: #f4f0e9; /* primary text */
+
+  --color-surface: #12110d;
+  --color-surface-dim: #0e0d0a;
+  --color-surface-bright: #1f1c16;
+  --color-surface-container-lowest: #1b1913;
+  --color-surface-container-low: #1f1c16;
+  --color-surface-container: #26221a;
+  --color-surface-container-high: #2d2921;
+  --color-surface-container-highest: #342f26;
+  --color-surface-variant: #342f26;
+  --color-on-surface: #f4f0e9;
+  --color-on-surface-variant: #cdc6b6;
+  --color-outline: #9a917d;
+  --color-outline-variant: #4a4436;
+  --color-background: #12110d;
+  --color-on-background: #f4f0e9;
+
+  --color-primary: #f5b83c;
+  --color-on-primary: #271900;
+  --color-amber-ink: #fbc94a;
+
+  --color-error: #ffb4ab;
+  --color-on-error: #690005;
+  --color-error-container: #5c1a15;
+  --color-on-error-container: #ffdad6;
+
+  --shadow-resting: 0 4px 20px -2px rgb(0 0 0 / 0.4), 0 2px 6px -1px rgb(0 0 0 / 0.3);
+  --shadow-hover: 0 16px 36px -4px rgb(0 0 0 / 0.55), 0 4px 12px -2px rgb(0 0 0 / 0.35);
+  --shadow-floating: 0 24px 48px -8px rgb(0 0 0 / 0.6);
+}
+
+/*
+ * Areas that keep a fixed background (the charcoal footer and trust band, dark cards, the amber call-to-action band)
+ * put the light-mode colours back, so their text stays legible in both themes.
+ * Use class="scheme-light" on any block that has an amber or charcoal background of its own.
+ */
+:root[data-theme="dark"] :is(.on-dark, .scheme-light, .card-dark) {
+  --color-white: #ffffff;
+  --color-canvas: #fbfaf8;
+  --color-neutral-50: #ffffff;
+  --color-neutral-100: #fbfaf8;
+  --color-neutral-200: #e9e6df;
+  --color-neutral-400: #9c988f;
+  --color-neutral-700: #4a463d;
+  --color-neutral-900: #17150f;
+  --color-surface: #fcf9f2;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container-low: #f6f3ec;
+  --color-surface-container: #f1eee6;
+  --color-on-surface: #1c1c18;
+  --color-primary: #7c5800;
+  --color-amber-ink: #926300;
+  --color-error: #ba1a1a;
+  --color-on-error: #ffffff;
+  --color-error-container: #ffdad6;
+  --color-on-error-container: #93000a;
+}
+
+/* Dropdown arrow: the light-mode icon is dark ink, so it is swapped for a light one */
+:root[data-theme="dark"] .select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23f4f0e9' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+}
+
+/* A charcoal checkbox would vanish on a dark card, so checked boxes get an amber outline */
+:root[data-theme="dark"] :is(.checkbox, .radio):checked {
+  border-color: var(--color-amber);
+}

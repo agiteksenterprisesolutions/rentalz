@@ -1,0 +1,225 @@
+THERENTALZ - ALL PLANS
+Generated 2026-09-19 from the database. Prices are in AED, paid once (no subscription).
+Each ad credit publishes one approved ad for the run length shown. Featured days apply to each ad.
+
+================================================================
+SINGLE AD
+================================================================
+
+Standard Listing
+  Price:          AED 20
+  Ads included:   1
+  Each ad live:   30 days
+  Featured days:  None
+  Statistics:     No
+  Support:        Yes
+
+Feature ads for 3 days
+  Price:          AED 30
+  Ads included:   1
+  Each ad live:   30 days
+  Featured days:  3 per ad
+  Statistics:     Yes
+  Support:        Yes
+
+Feature ads for 7 days
+  Price:          AED 50
+  Ads included:   1
+  Each ad live:   30 days
+  Featured days:  7 per ad
+  Statistics:     Yes
+  Support:        Yes
+
+Feature ads for 14 days
+  Price:          AED 70
+  Ads included:   1
+  Each ad live:   30 days
+  Featured days:  14 per ad
+  Statistics:     Yes
+  Support:        Yes
+
+Feature ads for 30 days
+  Price:          AED 100
+  Ads included:   1
+  Each ad live:   30 days
+  Featured days:  30 per ad
+  Statistics:     Yes
+  Support:        Yes
+
+================================================================
+BASIC PACKAGE
+================================================================
+
+Standard Listing
+  Price:          AED 184  (AED 18.4 per ad)
+  Ads included:   10
+  Each ad live:   30 days
+  Featured days:  None
+  Statistics:     No
+  Support:        Yes
+
+Feature ads for 3 days
+  Price:          AED 267  (AED 26.7 per ad)
+  Ads included:   10
+  Each ad live:   30 days
+  Featured days:  3 per ad
+  Statistics:     No
+  Support:        Yes
+
+Feature ads for 7 days
+  Price:          AED 430  (AED 43 per ad)
+  Ads included:   10
+  Each ad live:   30 days
+  Featured days:  7 per ad
+  Statistics:     No
+  Support:        Yes
+
+Feature ads for 14 days
+  Price:          AED 581  (AED 58.1 per ad)
+  Ads included:   10
+  Each ad live:   30 days
+  Featured days:  14 per ad
+  Statistics:     No
+  Support:        Yes
+
+Feature ads for 30 days
+  Price:          AED 800  (AED 80 per ad)
+  Ads included:   10
+  Each ad live:   30 days
+  Featured days:  30 per ad
+  Statistics:     No
+  Support:        Yes
+
+================================================================
+BUSINESS COMBO PACKAGE
+================================================================
+
+Standard Listing
+  Price:          AED 430  (AED 17.2 per ad)
+  Ads included:   25
+  Each ad live:   30 days
+  Featured days:  None
+  Statistics:     Yes
+  Support:        Yes
+
+Feature ads for 3 days
+  Price:          AED 615  (AED 24.6 per ad)
+  Ads included:   25
+  Each ad live:   30 days
+  Featured days:  3 per ad
+  Statistics:     Yes
+  Support:        Yes
+
+Feature ads for 7 days
+  Price:          AED 975  (AED 39 per ad)
+  Ads included:   25
+  Each ad live:   30 days
+  Featured days:  7 per ad
+  Statistics:     Yes
+  Support:        Yes
+
+Feature ads for 14 days
+  Price:          AED 1,295  (AED 51.8 per ad)
+  Ads included:   25
+  Each ad live:   30 days
+  Featured days:  14 per ad
+  Statistics:     Yes
+  Support:        Yes
+
+Feature ads for 30 days
+  Price:          AED 1,750  (AED 70 per ad)
+  Ads included:   25
+  Each ad live:   30 days
+  Featured days:  30 per ad
+  Statistics:     Yes
+  Support:        Yes
+
+================================================================
+UNLIMITED BUSINESS PACKAGE
+================================================================
+
+Standard Listing
+  Price:          AED 820  (AED 16.4 per ad)
+  Ads included:   50
+  Each ad live:   30 days
+  Featured days:  None
+  Statistics:     Yes
+  Support:        Yes
+
+Feature ads for 3 days
+  Price:          AED 1,170  (AED 23.4 per ad)
+  Ads included:   50
+  Each ad live:   30 days
+  Featured days:  3 per ad
+  Statistics:     Yes
+  Support:        Yes
+
+Feature ads for 7 days
+  Price:          AED 1,850  (AED 37 per ad)
+  Ads included:   50
+  Each ad live:   30 days
+  Featured days:  7 per ad
+  Statistics:     Yes
+  Support:        Yes
+
+Feature ads for 14 days
+  Price:          AED 2,450  (AED 49 per ad)
+  Ads included:   50
+  Each ad live:   30 days
+  Featured days:  14 per ad
+  Statistics:     Yes
+  Support:        Yes
+
+Feature ads for 30 days
+  Price:          AED 3,250  (AED 65 per ad)
+  Ads included:   50
+  Each ad live:   30 days
+  Featured days:  30 per ad
+  Statistics:     Yes
+  Support:        Yes
+
+================================================================
+VIP BUSINESS PACKAGE
+================================================================
+
+Standard Listing
+  Price:          AED 1,560  (AED 15.6 per ad)
+  Ads included:   100
+  Each ad live:   30 days
+  Featured days:  None
+  Statistics:     Yes
+  Support:        Yes
+
+Feature ads for 3 days
+  Price:          AED 2,220  (AED 22.2 per ad)
+  Ads included:   100
+  Each ad live:   30 days
+  Featured days:  3 per ad
+  Statistics:     Yes
+  Support:        Yes
+
+Feature ads for 7 days
+  Price:          AED 3,500  (AED 35 per ad)
+  Ads included:   100
+  Each ad live:   30 days
+  Featured days:  7 per ad
+  Statistics:     Yes
+  Support:        Yes
+
+Feature ads for 14 days
+  Price:          AED 4,550  (AED 45.5 per ad)
+  Ads included:   100
+  Each ad live:   30 days
+  Featured days:  14 per ad
+  Statistics:     Yes
+  Support:        Yes
+
+Feature ads for 30 days
+  Price:          AED 6,000  (AED 60 per ad)
+  Ads included:   100
+  Each ad live:   30 days
+  Featured days:  30 per ad
+  Statistics:     Yes
+  Support:        Yes
+
+Total: 25 plans in 5 groups.
