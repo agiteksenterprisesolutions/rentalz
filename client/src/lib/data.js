@@ -1,5 +1,6 @@
 import { cache } from "react";
 import { apiRequest } from "@/api/apiHandler";
+import { HERO_CANDIDATES, MAX_HERO_SLIDES } from "@/components/home/heroSlides";
 
 // Server-side data for public pages. Every call returns a plain fallback if the API is unreachable,
 // so a page still renders (with less content) instead of failing.
@@ -52,3 +53,23 @@ export const getCategory = async (slug) => {
 
 /** Which social sign-in buttons to show: { google: bool, facebook: bool }. */
 export const getSocialProviders = () => load({ url: "/auth/providers", revalidate: FIVE_MINUTES }, { google: false, facebook: false });
+
+/**
+ * Slides for the home hero: one per machine category that has live listings, with its title. If no candidate category
+ * has listings yet, the first one is still shown so the hero is never empty.
+ */
+export const getHeroSlides = async () => {
+  const slides = await Promise.all(
+    HERO_CANDIDATES.map(async (candidate) => {
+      const [category, found] = await Promise.all([
+        getCategory(candidate.slug),
+        load({ url: "/ads", params: { category: candidate.slug, limit: 1 }, revalidate: FIVE_MINUTES }, null),
+      ]);
+      if (!category) return null;
+      return { ...candidate, title: category.title, total: found?.pagination?.total ?? 0 };
+    }),
+  );
+  const available = slides.filter(Boolean);
+  const withListings = available.filter((slide) => slide.total > 0).slice(0, MAX_HERO_SLIDES);
+  return withListings.length ? withListings : available.slice(0, 1);
+};

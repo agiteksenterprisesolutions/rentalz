@@ -20,7 +20,7 @@ export function PlansHero({ summary }) {
             Buy ad credits once and publish when you&apos;re ready. Start with a single ad, or save on every ad with a business tier. Add featured days if you want your listing shown first.
           </p>
         </div>
-        <aside className="scheme-light rounded-3xl bg-amber p-space-lg" aria-label="Pricing at a glance">
+        <aside className="scheme-light rounded-card-lg bg-amber p-space-lg" aria-label="Pricing at a glance">
           <p className="type-label-mono-md tracking-[0.16em] text-neutral-900/70 uppercase">Plans start at</p>
           <p className="type-display-xl">{formatAed(summary.minPrice)}</p>
           <p className="type-body-md mt-1 text-neutral-900/80">for a single ad, live for {summary.duration ?? "the period shown"}.</p>
@@ -71,7 +71,7 @@ export function FeaturedBoost({ summary }) {
 
 export function PlansCta() {
   return (
-    <section aria-labelledby="cta-title" className="on-dark rounded-3xl bg-charcoal p-space-lg text-white md:p-space-2xl">
+    <section aria-labelledby="cta-title" className="on-dark rounded-card-lg bg-charcoal p-space-lg text-white md:p-space-2xl">
       <div className="flex flex-col items-start justify-between gap-space-lg lg:flex-row lg:items-center">
         <div className="max-w-2xl">
           <p className="type-label-mono-md tracking-[0.16em] text-amber uppercase">Need something different?</p>

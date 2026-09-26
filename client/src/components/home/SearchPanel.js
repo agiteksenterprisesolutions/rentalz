@@ -15,7 +15,7 @@ export default function SearchPanel({ cities, categories, popular }) {
   const [type, setType] = useState("RENT");
 
   return (
-    <form action="/ads" method="get" role="search" aria-label="Search listings" className="rounded-3xl border border-neutral-200 bg-white p-space-md shadow-hover md:p-space-lg">
+    <form action="/ads" method="get" role="search" aria-label="Search listings" className="rounded-card-lg border border-neutral-200 bg-white p-space-md shadow-hover md:p-space-lg">
       <input type="hidden" name="type" value={type} />
 
       <div role="tablist" aria-label="Listing type" className="segmented">

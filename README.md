@@ -72,4 +72,5 @@ server/
 - [x] Header rebuild: Browse drop-down (Rent, Buy, All listings), Plans link, profile pill with account menu, dark mode, favicon from the logo
 - [x] Plans page: hero, tier cards, full 25-plan comparison table with filters, featured-days explainer, contact CTA, FAQ
 - [x] Sign-in and register pages: two-section layout with illustration, Google and Facebook sign-in (needs the redirect URIs registered, see docs/api.md)
+- [x] Home hero redesign: transparent machine cut-outs from the legacy assets (public/hero), rotating machine categories with live figures, angled CTA, search panel overlapping the bottom edge
 - [ ] Remaining: Stripe and SMTP live tests (need your keys), production build and deploy notes

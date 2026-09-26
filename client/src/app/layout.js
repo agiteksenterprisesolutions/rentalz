@@ -1,5 +1,7 @@
 import { JetBrains_Mono, Space_Grotesk, Work_Sans } from "next/font/google";
 import "./globals.css";
+import AssistantWidget from "@/components/assistant/AssistantWidget";
+import BackToTop from "@/components/ui/BackToTop";
 
 // Font roles from the design system: headlines, body copy, and specs/prices/badges.
 // The CSS variables feed --font-display / --font-body / --font-mono in styles/tokens.css.
@@ -49,7 +51,11 @@ export default function RootLayout({ children }) {
       <head>
         <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
       </head>
-      <body className="flex min-h-screen flex-col">{children}</body>
+      <body className="flex min-h-screen flex-col">
+        {children}
+        <BackToTop />
+        <AssistantWidget />
+      </body>
     </html>
   );
 }

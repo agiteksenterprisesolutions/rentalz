@@ -21,7 +21,7 @@ const checkFiles = (files, room) => {
 
 function Tile({ src, label, onRemove, busy }) {
   return (
-    <li className="relative aspect-square overflow-hidden rounded-xl border border-neutral-200 bg-white">
+    <li className="relative aspect-square overflow-hidden rounded-control border border-neutral-200 bg-white">
       <Image src={src} alt="" fill unoptimized={src.startsWith("blob:")} sizes="150px" className="object-cover" />
       <button type="button" onClick={onRemove} disabled={busy} aria-label={label} className="absolute right-1.5 top-1.5 flex size-7 items-center justify-center rounded-full bg-neutral-900/80 text-white hover:bg-neutral-900 disabled:opacity-50">
         <X aria-hidden="true" className="size-4" />
@@ -92,7 +92,7 @@ export default function AdPhotos({ adId, initial = [], files = [], onFiles }) {
       <input ref={input} type="file" accept={ACCEPT} multiple onChange={onPick} className="sr-only" tabIndex={-1} aria-hidden="true" />
       {error && <p role="alert" className="field-error mb-space-sm">{error}</p>}
       {count === 0 ? (
-        <p className="type-body-sm rounded-xl border border-dashed border-neutral-300 p-space-lg text-center text-neutral-700">Ads with clear photos get far more calls. JPG, PNG or WebP, up to 5 MB each. The first photo is the cover.</p>
+        <p className="type-body-sm rounded-control border border-dashed border-neutral-300 p-space-lg text-center text-neutral-700">Ads with clear photos get far more calls. JPG, PNG or WebP, up to 5 MB each. The first photo is the cover.</p>
       ) : (
         <ul className="grid grid-cols-3 gap-2 sm:grid-cols-4 md:grid-cols-5">
           {adId

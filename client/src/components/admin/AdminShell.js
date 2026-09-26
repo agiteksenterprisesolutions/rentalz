@@ -59,14 +59,14 @@ export default function AdminShell({ children }) {
           {links.map(({ href, label, icon: Icon, exact }) => {
             const active = exact ? pathname === href : pathname.startsWith(href);
             return (
-              <Link key={href} href={href} aria-current={active ? "page" : undefined} className={`flex shrink-0 items-center gap-2 rounded-xl px-3 py-2.5 font-display text-sm font-semibold transition-colors ${active ? "bg-neutral-900 text-white" : "text-neutral-700 hover:bg-neutral-900/5 hover:text-neutral-900"}`}>
+              <Link key={href} href={href} aria-current={active ? "page" : undefined} className={`flex shrink-0 items-center gap-2 rounded-control px-3 py-2.5 font-display text-sm font-semibold transition-colors ${active ? "bg-neutral-900 text-white" : "text-neutral-700 hover:bg-neutral-900/5 hover:text-neutral-900"}`}>
                 <Icon aria-hidden="true" className="size-4" />
                 {label}
               </Link>
             );
           })}
-          <Link href="/dashboard" className="flex shrink-0 items-center gap-2 rounded-xl px-3 py-2.5 font-display text-sm font-semibold text-neutral-700 hover:bg-neutral-900/5"><BarChart3 aria-hidden="true" className="size-4" />My account</Link>
-          <button type="button" onClick={signOut} className="flex shrink-0 items-center gap-2 rounded-xl px-3 py-2.5 font-display text-sm font-semibold text-neutral-700 hover:bg-neutral-900/5"><LogOut aria-hidden="true" className="size-4" />Sign out</button>
+          <Link href="/dashboard" className="flex shrink-0 items-center gap-2 rounded-control px-3 py-2.5 font-display text-sm font-semibold text-neutral-700 hover:bg-neutral-900/5"><BarChart3 aria-hidden="true" className="size-4" />My account</Link>
+          <button type="button" onClick={signOut} className="flex shrink-0 items-center gap-2 rounded-control px-3 py-2.5 font-display text-sm font-semibold text-neutral-700 hover:bg-neutral-900/5"><LogOut aria-hidden="true" className="size-4" />Sign out</button>
         </nav>
         {user && <p className="type-body-sm hidden truncate px-space-md pb-space-md text-neutral-700 lg:block">{user.email}</p>}
       </aside>

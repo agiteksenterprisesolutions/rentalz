@@ -6,7 +6,7 @@ import { useState } from "react";
 import { MAIN_NAV, POST_AD_HREF, SIGN_IN_HREF } from "./navigation";
 import { useAuthStore } from "@/store/authStore";
 
-const row = "rounded-xl px-4 py-3 font-display text-base font-semibold hover:bg-canvas";
+const row = "rounded-control px-4 py-3 font-display text-base font-semibold hover:bg-canvas";
 
 // Below the lg breakpoint the main links move into this floating panel; groups open like an accordion.
 export default function MobileNav() {
@@ -37,7 +37,7 @@ export default function MobileNav() {
                   {group === item.label && (
                     <div className="ml-4 flex flex-col border-l border-neutral-200 pl-2">
                       {item.children.map((child) => (
-                        <Link key={child.href} href={child.href} onClick={close} className="rounded-xl px-4 py-2.5 font-display text-base font-medium hover:bg-canvas">{child.label}</Link>
+                        <Link key={child.href} href={child.href} onClick={close} className="rounded-control px-4 py-2.5 font-display text-base font-medium hover:bg-canvas">{child.label}</Link>
                       ))}
                     </div>
                   )}

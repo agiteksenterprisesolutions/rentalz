@@ -10,3 +10,6 @@
 button {
     cursor: pointer;
 }
+
+/* Note for `next dev`: Turbopack only re-runs Tailwind when THIS file's contents change, so after editing
+   any of the imported partials above, change something here too (a character in this comment is enough — like this one). */

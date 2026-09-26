@@ -22,7 +22,7 @@ export default function FavouriteButton({ adId, title, className = "", onChange,
     if (hydrated && signedIn) load();
   }, [hydrated, signedIn, load]);
 
-  const base = `z-10 inline-flex items-center justify-center gap-2 rounded-full border border-neutral-200 bg-white text-neutral-900 shadow-resting transition-colors hover:border-neutral-900 ${withLabel ? "h-10 px-4 font-display text-sm font-semibold" : "size-9"} ${className}`;
+  const base = `z-10 inline-flex items-center justify-center gap-2 rounded-control border border-neutral-200 bg-white text-neutral-900 transition-colors hover:border-neutral-900 ${withLabel ? "h-10 px-4 font-display text-[0.8125rem] font-bold tracking-[0.08em] uppercase" : "size-9"} ${className}`;
   const icon = <Heart aria-hidden="true" className={`size-4 ${hydrated && signedIn && saved ? "fill-amber-deep text-amber-deep" : ""}`} />;
 
   if (!hydrated || !signedIn) {

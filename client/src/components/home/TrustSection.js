@@ -15,7 +15,7 @@ export default function TrustSection({ cities, categoryTree, makes }) {
 
   return (
     <section aria-labelledby="trust-title" className="on-dark bg-charcoal text-white">
-      <div className="container-page grid gap-space-xl py-space-2xl xl:grid-cols-2 xl:items-center">
+      <div className="container-page grid gap-space-xl py-space-2xl xl:grid-cols-2 xl:items-center xl:gap-space-2xl xl:py-26">
         <div className="flex flex-col items-start gap-space-lg">
           <SectionHeading
             id="trust-title"
@@ -34,11 +34,12 @@ export default function TrustSection({ cities, categoryTree, makes }) {
           </div>
         </div>
 
-        <dl className="grid gap-gutter-mobile sm:grid-cols-2 md:gap-gutter">
+        {/* Figures on a rule, like a data plate: no boxes, and the numbers carry the same mono as the prices. */}
+        <dl className="grid gap-x-gutter gap-y-space-lg sm:grid-cols-2">
           {stats.map((stat) => (
-            <div key={stat.label} className="flex flex-col gap-space-sm rounded-2xl border border-white/[0.08] bg-white/[0.04] p-space-lg">
-              <dd className="order-1 font-display text-5xl font-bold tracking-tight text-amber">{stat.value}</dd>
-              <dt className="order-2 type-headline-sm">{stat.label}</dt>
+            <div key={stat.label} className="flex flex-col gap-space-xs border-t border-white/25 pt-space-md">
+              <dd className="order-1 font-mono text-[2.75rem] leading-none font-bold tracking-tight text-amber">{stat.value}</dd>
+              <dt className="order-2 type-headline-sm mt-space-sm">{stat.label}</dt>
               <dd className="order-3 type-body-sm text-white/60">{stat.text}</dd>
             </div>
           ))}

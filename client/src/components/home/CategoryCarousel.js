@@ -39,13 +39,15 @@ export default function CategoryCarousel({ categories }) {
           const Icon = ICONS[category.slug] ?? Construction;
           return (
             <li key={category.id} className="w-[13rem] shrink-0 snap-start md:w-[15rem]">
-              <Link href={`/ads?category=${category.slug}`} className="card card-interactive group flex h-full flex-col gap-space-lg">
-                <span className="flex size-14 items-center justify-center rounded-xl bg-surface-container-low text-neutral-900 transition-colors group-hover:bg-amber group-hover:text-on-amber">
-                  <Icon aria-hidden="true" className="size-7" strokeWidth={1.75} />
-                </span>
+              {/* A filled plate with the brand's clipped corner; the whole tile goes amber on hover. */}
+              <Link
+                href={`/ads?category=${category.slug}`}
+                className="corner-cut group flex h-full min-h-40 flex-col gap-space-lg bg-surface-container-low p-space-md transition-colors duration-200 ease-soft hover:bg-amber hover:text-on-amber"
+              >
+                <Icon aria-hidden="true" className="size-8 text-neutral-900 transition-colors group-hover:text-on-amber" strokeWidth={1.5} />
                 <span className="mt-auto flex items-end justify-between gap-2">
                   <span className="type-headline-sm">{category.title}</span>
-                  <ArrowRight aria-hidden="true" className="size-4 shrink-0 text-neutral-400 transition-transform group-hover:translate-x-1 group-hover:text-neutral-900" />
+                  <ArrowRight aria-hidden="true" className="size-4 shrink-0 text-neutral-400 transition-transform group-hover:translate-x-1 group-hover:text-on-amber" />
                 </span>
               </Link>
             </li>

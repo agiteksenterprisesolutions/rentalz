@@ -45,7 +45,7 @@ export default function HeaderAccount() {
   }, [hydrated, isAuthenticated, fetchMe]);
 
   if (!hydrated || !isAuthenticated || !user) {
-    return <Link href={SIGN_IN_HREF} className="hidden rounded-lg px-3 py-2 font-display text-sm font-semibold text-neutral-700 transition-colors hover:text-neutral-900 sm:inline-block">Sign in</Link>;
+    return <Link href={SIGN_IN_HREF} className="btn btn-ghost btn-sm hidden sm:inline-flex">Sign in</Link>;
   }
 
   const isStaff = role === "ADMIN" || role === "MODERATOR";
@@ -73,7 +73,7 @@ export default function HeaderAccount() {
         aria-haspopup="true"
         aria-label={`Account menu for ${user.name}`}
         onClick={() => setOpen((v) => !v)}
-        className="flex items-center gap-2 rounded-2xl border border-neutral-200 bg-white p-1 pr-2 transition-colors hover:border-outline-variant sm:pr-3"
+        className="flex items-center gap-2 rounded-card border border-neutral-200 bg-white p-1 pr-2 transition-colors hover:border-outline-variant sm:pr-3"
       >
         <Avatar user={user} />
         <span className="hidden max-w-40 text-left leading-tight sm:block">
@@ -92,14 +92,14 @@ export default function HeaderAccount() {
           <div className="divider my-space-sm" />
           <nav aria-label="Account" className="flex flex-col">
             {links.map(({ href, label, icon: Icon }) => (
-              <Link key={href} href={href} onClick={close} className="flex items-center gap-3 rounded-xl px-3 py-2.5 font-display text-sm font-semibold text-neutral-900 transition-colors hover:bg-neutral-900/5">
+              <Link key={href} href={href} onClick={close} className="flex items-center gap-3 rounded-control px-3 py-2.5 font-display text-sm font-semibold text-neutral-900 transition-colors hover:bg-neutral-900/5">
                 <Icon aria-hidden="true" className="size-4 text-neutral-700" />
                 {label}
               </Link>
             ))}
           </nav>
           <div className="divider my-space-sm" />
-          <button type="button" onClick={signOut} className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left font-display text-sm font-semibold text-neutral-900 transition-colors hover:bg-neutral-900/5">
+          <button type="button" onClick={signOut} className="flex w-full items-center gap-3 rounded-control px-3 py-2.5 text-left font-display text-sm font-semibold text-neutral-900 transition-colors hover:bg-neutral-900/5">
             <LogOut aria-hidden="true" className="size-4 text-neutral-700" />
             Log out
           </button>

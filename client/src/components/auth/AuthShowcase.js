@@ -60,7 +60,7 @@ export default function AuthShowcase() {
   return (
     <aside aria-label="About TheRentalz" className="on-dark relative hidden overflow-hidden bg-charcoal text-white lg:sticky lg:top-0 lg:flex lg:h-dvh lg:flex-col lg:self-start lg:p-space-2xl">
       <div className="relative z-10 max-w-lg">
-        <p className="type-label-mono-md tracking-[0.16em] text-amber uppercase">Equipment and vehicles, UAE</p>
+        <p className="eyebrow text-amber">Equipment and vehicles, UAE</p>
         <h2 className="type-display-xl mt-space-md uppercase">Put your equipment to work</h2>
         <ul className="mt-space-lg flex flex-col gap-space-md">
           {POINTS.map(({ icon: Icon, text }) => (

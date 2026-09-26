@@ -6,7 +6,7 @@ import HowItWorks from "@/components/home/HowItWorks";
 import SellCta from "@/components/home/SellCta";
 import Testimonials from "@/components/home/Testimonials";
 import SectionHeading from "@/components/ui/SectionHeading";
-import { getAdTotal, getCategoryTree, getCities, getFeaturedAds, getMakes, getPopularCategories, getSeoSettings, getStartingPackagePrice } from "@/lib/data";
+import { getAdTotal, getCategoryTree, getCities, getFeaturedAds, getHeroSlides, getMakes, getPopularCategories, getSeoSettings, getStartingPackagePrice } from "@/lib/data";
 import { buildMetadata, jsonLd, siteUrl } from "@/lib/seo";
 
 export async function generateMetadata() {
@@ -14,7 +14,7 @@ export async function generateMetadata() {
 }
 
 export default async function HomePage() {
-  const [seo, cities, makes, categoryTree, popular, featured, total, startingPrice] = await Promise.all([
+  const [seo, cities, makes, categoryTree, popular, featured, total, startingPrice, heroSlides] = await Promise.all([
     getSeoSettings(),
     getCities(),
     getMakes(),
@@ -23,6 +23,7 @@ export default async function HomePage() {
     getFeaturedAds(8),
     getAdTotal(),
     getStartingPackagePrice(),
+    getHeroSlides(),
   ]);
 
   const site = siteUrl();
@@ -42,7 +43,7 @@ export default async function HomePage() {
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd(structuredData) }} />
 
-      <Hero spotlight={featured.find((ad) => ad.photos?.length)} cities={cities} categories={categoryTree} popular={popular.slice(0, 5)} />
+      <Hero slides={heroSlides} cities={cities} categories={categoryTree} popular={popular.slice(0, 5)} />
 
 
       {popular.length > 0 && (
@@ -55,7 +56,7 @@ export default async function HomePage() {
         <section aria-labelledby="featured-title" className="section bg-surface-container-low">
           <div className="container-page">
             <SectionHeading id="featured-title" eyebrow="Featured" title="Featured listings" />
-            <div className="mt-space-lg">
+            <div className="mt-space-xl">
               <FeaturedListings ads={featured} total={total} />
             </div>
           </div>

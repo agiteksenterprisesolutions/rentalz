@@ -4,6 +4,57 @@
  * Every class also composes with Tailwind utilities and breakpoint prefixes: class="btn btn-primary w-full md:w-auto".
  */
 
+/* ── Brand shapes ───────────────────────────────────────────────────────────
+ * These are utilities rather than component classes so the components below can @apply them.
+ * The clipped corner is the site's signature: plates, media frames and feature bands all carry it.
+ * It clips the border box, so a cut element draws its edge with a fill, not a border.
+ */
+
+@utility corner-cut {
+  clip-path: polygon(0 0, 100% 0, 100% calc(100% - var(--cut)), calc(100% - var(--cut)) 100%, 0 100%);
+}
+@utility corner-cut-lg {
+  clip-path: polygon(0 0, 100% 0, 100% calc(100% - var(--cut-lg)), calc(100% - var(--cut-lg)) 100%, 0 100%);
+}
+/* Same cut on the top-left instead: used where two shapes meet and should read as one cut sheet. */
+@utility corner-cut-tl {
+  clip-path: polygon(var(--cut) 0, 100% 0, 100% 100%, 0 100%, 0 var(--cut));
+}
+
+/* Measure line: a hairline running off to the right of a heading, as on a drawing */
+@utility rule-hair {
+  height: 1px;
+  min-width: 1.5rem;
+  flex: 1 1 0%;
+  background-color: var(--color-neutral-200);
+}
+
+/* Softens both ends of a full-bleed track so cards enter and leave instead of being chopped off. */
+@utility edge-fade {
+  --edge: clamp(1.5rem, 5vw, 4rem);
+  mask-image: linear-gradient(to right, transparent, #000 var(--edge), #000 calc(100% - var(--edge)), transparent);
+}
+
+/* An oversized figure used as a graphic, not as text: amber at the top, fading out towards the baseline. */
+@utility figure-ghost {
+  background-image: linear-gradient(
+    to bottom,
+    var(--color-amber) 0%,
+    color-mix(in oklab, var(--color-amber) 55%, transparent) 55%,
+    transparent 92%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Hazard stripe, straight off a machine: caps the amber bands so they read as plant, not as a banner. */
+@utility hazard-rule {
+  height: 0.375rem;
+  width: 100%;
+  background-image: repeating-linear-gradient(-45deg, var(--color-charcoal) 0 0.5rem, transparent 0.5rem 1rem);
+}
+
 @layer components {
   /* ── Layout ───────────────────────────────────────────────────────────── */
 
@@ -17,15 +68,18 @@
     @apply grid grid-cols-4 gap-x-gutter-mobile md:grid-cols-8 md:gap-x-5 xl:grid-cols-12 xl:gap-x-gutter;
   }
 
+  /* Sections are given room to breathe: the page should read as a sequence of separate statements. */
   .section {
-    @apply py-space-xl xl:py-space-2xl;
+    @apply py-space-2xl xl:py-26;
   }
+
 
   /* ── Buttons ──────────────────────────────────────────────────────────── */
 
+  /* Buttons are stencilled labels: squared off, uppercase, letter-spaced like a control panel. */
   .btn {
-    @apply inline-flex h-12 cursor-pointer select-none items-center justify-center gap-2 rounded-xl border border-transparent px-space-lg
-      font-display text-sm font-bold whitespace-nowrap no-underline transition duration-150 ease-soft;
+    @apply inline-flex h-12 cursor-pointer select-none items-center justify-center gap-2 rounded-control border border-transparent px-space-lg
+      font-display text-[0.8125rem] font-bold tracking-[0.08em] whitespace-nowrap uppercase no-underline transition duration-150 ease-soft;
 
     &:focus-visible {
       @apply outline-none shadow-focus ring-2 ring-amber-deep ring-offset-2 ring-offset-canvas;
@@ -51,6 +105,36 @@
   }
 
   /* The "ink" button: neutral-900 fill with white text in light mode, and the reverse in dark mode */
+  /* Slide change in the home hero: the new machine slides in from the right and fades up */
+  .hero-slide-in {
+    animation: hero-slide-in 500ms var(--ease-soft) both;
+  }
+  @keyframes hero-slide-in {
+    from {
+      opacity: 0;
+      transform: translateX(24px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  /* Call to action with a slanted right edge (used in the home hero): class="btn-angled" */
+  .btn-angled {
+    @apply inline-flex h-14 items-center gap-2 bg-amber pl-space-lg pr-space-2xl font-display text-sm font-bold tracking-wide whitespace-nowrap text-on-amber uppercase no-underline transition-colors duration-150;
+    clip-path: polygon(0 0, calc(100% - 28px) 0, 100% 100%, 0 100%);
+
+    &:hover {
+      @apply bg-amber-deep;
+    }
+    /* the slanted clip would cut an outside outline, so the focus ring sits inside the shape */
+    &:focus-visible {
+      outline-offset: -5px;
+      @apply outline-2 outline-neutral-900;
+    }
+  }
+
   .btn-secondary {
     @apply bg-neutral-900 text-white;
 
@@ -76,10 +160,10 @@
   }
 
   .btn-sm {
-    @apply h-10 px-4 text-[13px];
+    @apply h-10 px-4 text-[0.6875rem];
   }
   .btn-lg {
-    @apply h-14 px-8 text-base;
+    @apply h-14 px-8 text-sm;
   }
   .btn-icon {
     @apply size-12 px-0;
@@ -115,35 +199,43 @@
 
   /* ── Cards ────────────────────────────────────────────────────────────── */
 
+  /* A plate: a flat panel with a drawn edge. No soft shadow, no soft corners. */
   .card {
-    @apply rounded-2xl border border-neutral-200 bg-white p-space-md shadow-resting;
+    @apply relative rounded-card border border-neutral-200 bg-white p-space-md;
   }
 
-  /* Whole card is a link or button: lifts and its hairline turns ochre */
+  /* Whole card is a link or button. Instead of lifting, an amber rule runs across its top edge and
+     the plate throws a hard offset, the way a printed card sits on a drawing. */
   .card-interactive {
     @apply cursor-pointer transition duration-200 ease-soft;
 
+    &::before {
+      content: "";
+      @apply pointer-events-none absolute -inset-x-px -top-px z-10 h-0.5 origin-left scale-x-0 bg-amber transition-transform duration-300 ease-soft;
+    }
     &:hover,
     &:focus-within {
-      @apply border-amber-deep shadow-hover;
+      @apply border-outline-variant shadow-hover;
     }
-    &:hover {
-      @apply -translate-y-0.5;
+    &:hover::before,
+    &:focus-within::before {
+      @apply scale-x-100;
     }
   }
 
   .card-dark {
-    @apply rounded-3xl border border-white/[0.08] bg-charcoal p-space-lg text-white;
+    @apply rounded-card-lg border border-white/10 bg-charcoal p-space-lg text-white;
 
     &.card-interactive:hover,
     &.card-interactive:focus-within {
-      @apply border-amber-deep;
+      @apply border-white/25;
     }
   }
 
-  /* Image well: off-white cut-out ground for machinery photos */
+  /* Image well: machinery photography sits flush, with the brand's clipped corner */
   .card-media {
-    @apply relative aspect-[4/3] overflow-hidden rounded-xl bg-surface-container-low;
+    @apply relative aspect-4/3 overflow-hidden bg-surface-container-low;
+    clip-path: polygon(0 0, 100% 0, 100% calc(100% - var(--cut)), calc(100% - var(--cut)) 100%, 0 100%);
 
     & > img {
       @apply size-full object-cover;
@@ -152,7 +244,7 @@
 
   /* Floating panels: modals, inspection drawers */
   .panel-floating {
-    @apply rounded-3xl border border-neutral-200 bg-white/85 shadow-floating backdrop-blur-frost;
+    @apply rounded-card-lg border border-neutral-200 bg-white/90 shadow-floating backdrop-blur-frost;
   }
   .scrim {
     @apply fixed inset-0 bg-charcoal/50 backdrop-blur-sm;
@@ -160,12 +252,13 @@
 
   /* ── Badges and status pills ──────────────────────────────────────────── */
 
+  /* Tags are stencilled onto the machine: squared off, mono, letter-spaced */
   .pill {
-    @apply inline-flex h-7 items-center gap-1.5 rounded-pill border border-neutral-200 bg-canvas px-3
-      font-mono text-[11px] leading-none font-bold tracking-[0.05em] whitespace-nowrap text-neutral-900 uppercase;
+    @apply inline-flex h-6 items-center gap-1.5 rounded-pill border border-neutral-200 bg-canvas px-2
+      font-mono text-[10px] leading-none font-bold tracking-[0.09em] whitespace-nowrap text-neutral-900 uppercase;
 
     &.pill-sm {
-      @apply h-6 px-2.5;
+      @apply h-5 px-1.5 text-[9px];
     }
   }
   /* Available, active, verified */
@@ -199,7 +292,7 @@
   .input,
   .select,
   .textarea {
-    @apply h-12 w-full rounded-xl border-[1.5px] border-neutral-200 bg-white px-4 font-body text-body-md text-neutral-900 transition duration-150;
+    @apply h-12 w-full rounded-control border-[1.5px] border-neutral-200 bg-white px-4 font-body text-body-md text-neutral-900 transition duration-150;
 
     &::placeholder {
       @apply text-neutral-400;
@@ -248,7 +341,7 @@
 
   /* Checkbox: 20px, 6px corners. Checked = charcoal fill with an amber tick. */
   .checkbox {
-    @apply size-5 shrink-0 cursor-pointer appearance-none rounded-[6px] border-[1.5px] border-neutral-200 bg-white bg-center bg-no-repeat transition duration-150;
+    @apply size-5 shrink-0 cursor-pointer appearance-none rounded-[2px] border-[1.5px] border-neutral-200 bg-white bg-center bg-no-repeat transition duration-150;
     background-size: 14px;
 
     &:hover:not(:disabled) {
@@ -301,10 +394,10 @@
   /* ── Segmented control and tabs ───────────────────────────────────────── */
 
   .segmented {
-    @apply inline-flex gap-1 rounded-xl bg-surface-container p-1;
+    @apply inline-flex gap-1 rounded-control border border-neutral-200 bg-surface-container p-1;
   }
   .segmented-item {
-    @apply inline-flex h-10 cursor-pointer items-center justify-center rounded-lg px-5 font-display text-sm font-semibold text-neutral-900 transition duration-150;
+    @apply inline-flex h-9 cursor-pointer items-center justify-center rounded-[1px] px-5 font-display text-[0.8125rem] font-bold tracking-[0.06em] uppercase text-neutral-900 transition duration-150;
 
     &:hover:not([aria-selected="true"], :disabled) {
       @apply bg-white;
@@ -324,14 +417,14 @@
   /* ── Global fleet search bar (hero) ───────────────────────────────────── */
 
   .search-bar {
-    @apply flex flex-col gap-2 rounded-2xl border border-neutral-200 bg-white p-2 shadow-resting md:flex-row md:items-stretch;
+    @apply flex flex-col gap-2 rounded-card border border-neutral-200 bg-white p-2 md:flex-row md:items-stretch;
 
     &:focus-within {
       @apply border-amber shadow-focus;
     }
   }
   .search-bar-field {
-    @apply flex min-w-0 flex-1 flex-col justify-center rounded-xl px-4 py-2 transition-colors hover:bg-canvas md:border-r md:border-neutral-200 md:last:border-r-0;
+    @apply flex min-w-0 flex-1 flex-col justify-center rounded-[1px] px-4 py-2 transition-colors hover:bg-canvas md:border-r md:border-neutral-200 md:last:border-r-0;
 
     & > label {
       @apply font-mono text-label-mono-sm text-neutral-700 uppercase;
@@ -345,7 +438,7 @@
 
   /* Tabular rows: spec name left, engineering value right, alternating grounds */
   .spec-table {
-    @apply overflow-hidden rounded-2xl border border-neutral-200 bg-white;
+    @apply overflow-hidden rounded-card border border-neutral-200 bg-white;
   }
   .spec-row {
     @apply flex items-baseline justify-between gap-4 border-b border-neutral-200 px-4 py-3 last:border-b-0 odd:bg-canvas even:bg-white;
@@ -389,17 +482,97 @@
   .divider {
     @apply h-px w-full border-0 bg-neutral-200;
   }
+  /* Every section opens with the same mark: a short amber rule, then a mono label. */
   .eyebrow {
-    @apply font-mono text-label-mono-md font-medium tracking-[0.16em] text-primary uppercase;
+    @apply flex items-center gap-space-sm font-mono text-label-mono-md font-medium tracking-[0.16em] text-primary uppercase;
+
+    &::before {
+      content: "";
+      @apply h-0.5 w-6 shrink-0 bg-amber;
+    }
   }
   .card-dark .eyebrow,
   .on-dark .eyebrow {
     @apply text-amber;
   }
 
+  /* A heading with a measure line running off to the right, as on a drawing. Pairs with SectionHeading. */
+  .heading-rule {
+    @apply flex items-center gap-space-md;
+
+    &::after {
+      content: "";
+      @apply h-px flex-1 bg-neutral-200;
+    }
+  }
+
+  /* ── Assistant chat ───────────────────────────────────────────────────── */
+
+  /* Message bubbles. They are rounded enough to read as speech, but the corner on the speaker's side is
+     squared off so they still belong to the rest of the site. */
+  .bubble {
+    @apply max-w-[85%] rounded-[0.625rem] px-space-md py-space-sm text-body-md;
+  }
+  .bubble-user {
+    @apply rounded-br-[2px] bg-charcoal text-on-charcoal;
+  }
+  .bubble-agent {
+    @apply rounded-bl-[2px] border border-neutral-200 bg-surface-container-low text-neutral-900;
+  }
+
+  /* The nudge beside the launcher, sliding in from the button it belongs to */
+  .nudge-in {
+    animation: nudge-in 360ms var(--ease-soft) both;
+  }
+  @keyframes nudge-in {
+    from {
+      opacity: 0;
+      transform: translateX(12px) scale(0.96);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .nudge-in {
+      animation: none;
+    }
+  }
+
+  /* The three dots while the assistant is composing an answer */
+  .typing-dot {
+    animation: typing-bounce 1.3s ease-in-out infinite;
+
+    &:nth-child(2) {
+      animation-delay: 0.16s;
+    }
+    &:nth-child(3) {
+      animation-delay: 0.32s;
+    }
+  }
+  @keyframes typing-bounce {
+    0%,
+    65%,
+    100% {
+      opacity: 0.3;
+      transform: translateY(0);
+    }
+    32% {
+      opacity: 1;
+      transform: translateY(-3px);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .typing-dot {
+      animation: none;
+      opacity: 0.6;
+    }
+  }
+
   /* Placeholder block while content loads */
   .skeleton {
-    @apply animate-pulse rounded-xl bg-surface-container-high;
+    @apply animate-pulse rounded-card bg-surface-container-high;
   }
 
   /* Visible only to screen readers */
@@ -407,3 +580,4 @@
     @apply sr-only;
   }
 }
+

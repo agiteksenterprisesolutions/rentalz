@@ -37,7 +37,7 @@ export default function ThemeToggle() {
 
   // Both icons are rendered and CSS shows the right one, so the server HTML never disagrees with the saved theme.
   return (
-    <button type="button" onClick={toggle} aria-pressed={theme === "dark"} aria-label="Dark mode" className="btn btn-ghost btn-icon btn-sm">
+    <button type="button" onClick={toggle} aria-pressed={theme === "dark"} aria-label="Dark mode" className="btn btn-ghost btn-icon btn-sm rounded-full">
       <Moon aria-hidden="true" className="dark:hidden" />
       <Sun aria-hidden="true" className="hidden dark:block" />
     </button>

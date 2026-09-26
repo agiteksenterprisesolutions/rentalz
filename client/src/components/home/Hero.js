@@ -1,60 +1,36 @@
-import { Check } from "lucide-react";
-import Image from "next/image";
-import Link from "next/link";
-import { getAdPrice } from "@/utils/format";
+import HeroShowcase from "./HeroShowcase";
 import SearchPanel from "./SearchPanel";
 
-const POINTS = ["Every ad is reviewed before it goes live", "Call or WhatsApp the owner directly"];
-
-export default function Hero({ spotlight, cities, categories, popular }) {
-  const photo = spotlight?.photos?.[0];
-  const price = spotlight ? getAdPrice(spotlight) : null;
+// `slides` are the machine categories from getHeroSlides(). On large screens the hero fills the first screen below the
+// header, with the search panel at its foot and clear of it, so both are visible without scrolling. As the screen gets
+// shorter the headline shrinks, then the decorative squares go (under 900px tall), then the standfirst (under 680px).
+export default function Hero({ slides, cities, categories, popular }) {
+  const intro = (
+    <>
+      <p className="type-label-mono-md flex items-center gap-3 tracking-[0.16em] text-amber-ink uppercase">
+        <span aria-hidden="true" className="h-0.5 w-10 bg-amber" />
+        UAE equipment and vehicle marketplace
+      </p>
+      <h1 id="hero-title" className="type-display-xl max-w-4xl xl:text-[clamp(2.25rem,7.6vh,4.5rem)] xl:leading-[1.06]">
+        Rent &amp; buy equipment and vehicles across the UAE
+      </h1>
+      <p className="type-body-lg max-w-xl text-neutral-700 [@media(max-height:680px)]:xl:hidden">
+        Browse listings from owners in every emirate. Compare daily, weekly and monthly rates, then contact the seller directly.
+      </p>
+      <div aria-hidden="true" className="flex gap-3 [@media(max-height:900px)]:xl:hidden">
+        {[0, 1, 2].map((i) => <span key={i} className="size-3.5 bg-amber" />)}
+      </div>
+    </>
+  );
 
   return (
-    <section aria-labelledby="hero-title">
-      <div className="container-page grid gap-space-xl pt-space-xl pb-space-2xl xl:grid-cols-2 xl:items-center xl:pt-space-2xl">
-        <div className="flex flex-col items-start gap-space-lg">
-          <h1 id="hero-title" className="type-display-xl max-w-xl uppercase">
-            Rent &amp; buy equipment and vehicles across the UAE
-          </h1>
-          <p className="type-body-lg max-w-lg text-neutral-700">
-            Browse listings from owners in every emirate. Compare daily, weekly and monthly rates, then contact the seller directly.
-          </p>
-          <ul className="flex flex-col gap-3">
-            {/* {POINTS.map((point) => (
-              <li key={point} className="type-body-md flex items-center gap-3 font-medium">
-                <span className="flex size-6 items-center justify-center rounded-full bg-amber text-on-amber">
-                  <Check aria-hidden="true" className="size-3.5" strokeWidth={3} />
-                </span>
-                {point}
-              </li>
-            ))} */}
-          </ul>
-        </div>
+    <section aria-labelledby="hero-title" className="relative isolate overflow-hidden xl:flex xl:min-h-[calc(100dvh-4.5rem)] xl:flex-col">
+      {/* slanted panel at the very back; the machine photo, a wash and the text stack above it */}
+      <div aria-hidden="true" className="absolute inset-0 -z-30 hidden bg-surface-container-low [clip-path:polygon(46%_0,100%_0,100%_100%,72%_100%)] xl:block" />
+      <HeroShowcase slides={slides} intro={intro} />
 
-        <div className="card-media aspect-4/3 rounded-3xl border border-neutral-200 shadow-resting">
-          {photo && (
-            <Image src={photo.url} alt="" fill priority sizes="(min-width: 1280px) 45vw, 92vw" className="object-cover" />
-          )}
-          {spotlight && (
-            <Link
-              href={`/ads/${spotlight.slug}`}
-              className="panel-floating absolute inset-x-space-md bottom-space-md flex items-center justify-between gap-4 rounded-2xl px-space-md py-space-sm transition-shadow hover:shadow-hover"
-            >
-              <span className="min-w-0">
-                <span className="eyebrow block">Featured now</span>
-                <span className="type-headline-sm block truncate">{spotlight.title}</span>
-              </span>
-              <span className="price shrink-0">
-                <span className="price-amount">{price.text}</span>
-                {price.unit && <span className="price-unit">{price.unit}</span>}
-              </span>
-            </Link>
-          )}
-        </div>
-      </div>
-
-      <div className="container-page -mt-space-xl relative z-10">
+      {/* The search panel sits at the hero's foot with its own breathing room above it. */}
+      <div className="container-page relative z-10 pb-space-xl pt-space-lg xl:pb-space-2xl">
         <SearchPanel cities={cities} categories={categories} popular={popular} />
       </div>
     </section>

@@ -79,7 +79,7 @@ export default function DesignSystemPage() {
               <div className="grid grid-cols-2 gap-space-md md:grid-cols-3 xl:grid-cols-6">
                 {group.swatches.map(([cls, name, hex]) => (
                   <div key={name} className="card p-space-sm">
-                    <div className={`${cls} h-16 rounded-xl border border-neutral-200`} />
+                    <div className={`${cls} h-16 rounded-control border border-neutral-200`} />
                     <p className="mt-space-sm text-sm font-semibold">{name}</p>
                     <p className="type-label-mono-md text-neutral-700">{hex}</p>
                   </div>
@@ -91,7 +91,7 @@ export default function DesignSystemPage() {
       </Section>
 
       <Section id="type" title="Typography">
-        <div className="flex flex-col divide-y divide-neutral-200 rounded-2xl border border-neutral-200 bg-white">
+        <div className="flex flex-col divide-y divide-neutral-200 rounded-card border border-neutral-200 bg-white">
           {typeRoles.map(([cls, label, sample]) => (
             <div key={cls} className="grid gap-space-sm px-space-lg py-space-md md:grid-cols-[14rem_1fr] md:items-baseline">
               <p className="type-label-mono-md text-neutral-700">{label}<br /><span className="text-neutral-400">{cls}</span></p>
@@ -112,7 +112,7 @@ export default function DesignSystemPage() {
           <button className="btn btn-primary btn-lg">Large</button>
           <button className="btn btn-secondary btn-icon" aria-label="Search"><Search /></button>
         </div>
-        <div className="on-dark mt-space-lg flex flex-wrap items-center gap-space-md rounded-3xl bg-charcoal p-space-lg">
+        <div className="on-dark mt-space-lg flex flex-wrap items-center gap-space-md rounded-card-lg bg-charcoal p-space-lg">
           <button className="btn btn-primary">Book now</button>
           <button className="btn btn-ghost-inverse">View details</button>
         </div>
@@ -249,16 +249,40 @@ export default function DesignSystemPage() {
 
       <Section id="elevation" title="Elevation">
         <div className="grid gap-gutter md:grid-cols-3">
-          <div className="rounded-2xl border border-neutral-200 bg-white p-space-lg shadow-resting">
+          <div className="rounded-card border border-neutral-200 bg-white p-space-lg shadow-resting">
             <p className="type-label-mono-md">shadow-resting</p>
           </div>
-          <div className="rounded-2xl border border-amber-deep bg-white p-space-lg shadow-hover">
+          <div className="rounded-card border border-amber-deep bg-white p-space-lg shadow-hover">
             <p className="type-label-mono-md">shadow-hover</p>
           </div>
           <div className="panel-floating p-space-lg">
             <p className="type-label-mono-md">panel-floating</p>
           </div>
         </div>
+      </Section>
+
+      <Section id="shape" title="Shape and marks">
+        <p className="type-body-md mb-space-lg max-w-2xl text-neutral-700">
+          Corners are barely broken (<code className="font-mono text-sm">--radius-card</code> is 2px), because the brand&rsquo;s
+          one flourish is the clipped corner. A cut element draws its edge with a fill, not a border, since the clip would cut the border too.
+        </p>
+        <div className="grid gap-gutter md:grid-cols-3">
+          <div className="corner-cut flex h-32 items-end bg-surface-container-high p-space-md">
+            <p className="type-label-mono-md">corner-cut</p>
+          </div>
+          <div className="corner-cut-lg flex h-32 items-end bg-surface-container-high p-space-md">
+            <p className="type-label-mono-md">corner-cut-lg</p>
+          </div>
+          <div className="corner-cut-tl flex h-32 items-end bg-surface-container-high p-space-md">
+            <p className="type-label-mono-md">corner-cut-tl</p>
+          </div>
+        </div>
+        <div className="scheme-light mt-space-lg bg-amber">
+          <div aria-hidden="true" className="hazard-rule" />
+          <p className="type-label-mono-md p-space-md text-neutral-900">hazard-rule, the cap on every amber band</p>
+        </div>
+        <h3 className="type-headline-sm heading-rule mt-space-lg">heading-rule</h3>
+        <p className="eyebrow mt-space-lg">eyebrow</p>
       </Section>
     </main>
   );

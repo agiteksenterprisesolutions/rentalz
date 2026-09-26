@@ -63,7 +63,7 @@ function Pages({ value, canEdit, onSaved }) {
       {saved && <Notice tone="success">Saved.</Notice>}
       <fieldset disabled={!canEdit} className="flex flex-col gap-space-lg">
         {rows.map((r, i) => (
-          <div key={i} className="flex flex-col gap-space-sm rounded-xl border border-neutral-200 p-space-md">
+          <div key={i} className="flex flex-col gap-space-sm rounded-control border border-neutral-200 p-space-md">
             <Field label="Page key" value={r.key} onChange={(e) => set(i, "key", e.target.value)} />
             <Field label="Title" value={r.title} onChange={(e) => set(i, "title", e.target.value)} maxLength={70} />
             <Field label="Description" value={r.description} onChange={(e) => set(i, "description", e.target.value)} maxLength={320} />

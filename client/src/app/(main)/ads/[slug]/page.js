@@ -121,7 +121,7 @@ export default async function AdDetailPage({ params }) {
           <AdGallery photos={ad.photos ?? []} title={ad.title} />
 
           <section aria-labelledby="specs">
-            <h2 id="specs" className="type-headline-md mb-space-md">Specifications</h2>
+            <h2 id="specs" className="type-headline-md heading-rule mb-space-md">Specifications</h2>
             {specs.length > 0 ? (
               <dl className="card grid divide-y divide-neutral-200 sm:grid-cols-2 sm:divide-y-0">
                 {specs.map(([label, value]) => (
@@ -138,14 +138,14 @@ export default async function AdDetailPage({ params }) {
 
           {ad.description && (
             <section aria-labelledby="about">
-              <h2 id="about" className="type-headline-md mb-space-md">About this listing</h2>
+              <h2 id="about" className="type-headline-md heading-rule mb-space-md">About this listing</h2>
               <p className="type-body-lg max-w-prose whitespace-pre-line text-neutral-900">{ad.description}</p>
             </section>
           )}
 
           {terms && (
             <section aria-labelledby="terms">
-              <h2 id="terms" className="type-headline-md mb-space-md">Seller terms</h2>
+              <h2 id="terms" className="type-headline-md heading-rule mb-space-md">Seller terms</h2>
               <p className="type-body-md max-w-prose whitespace-pre-line text-neutral-700">{terms}</p>
             </section>
           )}
@@ -195,7 +195,7 @@ export default async function AdDetailPage({ params }) {
 
       {related.length > 0 && (
         <section aria-labelledby="related" className="mt-space-2xl">
-          <h2 id="related" className="type-headline-md mb-space-md">Similar listings</h2>
+          <h2 id="related" className="type-headline-md heading-rule mb-space-md">Similar listings</h2>
           <div className="grid gap-space-md sm:grid-cols-2 lg:grid-cols-3">
             {related.map((item) => (
               <AdCard key={item.id} ad={item} />

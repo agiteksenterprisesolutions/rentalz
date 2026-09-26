@@ -83,7 +83,7 @@
 
   --color-neutral-50: #ffffff;
   --color-neutral-100: #fbfaf8;
-  --color-neutral-200: #e9e6df; /* hairline borders and dividers */
+  --color-neutral-200: #ddd7c9; /* hairline borders and dividers: a drawn line, not a ghost */
   --color-neutral-400: #9c988f; /* metadata and muted icons (decorative: below 4.5:1 on white) */
   --color-neutral-700: #4a463d; /* sub-headlines and spec copy */
   --color-neutral-900: #17150f; /* primary text */
@@ -151,12 +151,16 @@
   --text-label-mono-sm--font-weight: 500;
 
   /* ── Shape ──────────────────────────────────────────────────────────────── */
-  /* Tailwind's own radius scale is kept (xl = 12px, 2xl = 16px, 3xl = 24px), which is what the brief's prose uses.
-     These names say what each is for. */
-  --radius-control: 0.75rem; /* buttons and inputs */
-  --radius-card: 1rem; /* light cards, media frames */
-  --radius-card-lg: 1.5rem; /* dark feature cards, modals, hero frames */
-  --radius-pill: 9999px; /* badges, tags, status indicators */
+  /* Equipment is welded, bolted and stencilled, so the shape language is machined rather than soft:
+     corners are barely broken, and the brand's one flourish is the clipped corner (--cut, .corner-cut). */
+  --radius-control: 0.125rem; /* buttons and inputs */
+  --radius-card: 0.125rem; /* light cards, media frames */
+  --radius-card-lg: 0.25rem; /* dark feature cards, modals, hero frames */
+  --radius-pill: 0.125rem; /* badges, tags, status indicators: stencilled tags, not lozenges */
+
+  /* The clipped corner: the site's signature, cut off the bottom-right of plates and media frames. */
+  --cut: 1.25rem;
+  --cut-lg: 2rem;
 
   /* ── Spacing ────────────────────────────────────────────────────────────── */
   /* p-gutter, gap-gutter, px-margin, py-space-2xl ... Page margins and gutters change by breakpoint in components.css. */
@@ -174,9 +178,11 @@
   --container-page: 90rem; /* max-w-page = 1440px */
 
   /* ── Elevation ──────────────────────────────────────────────────────────── */
-  --shadow-resting: 0 4px 20px -2px rgb(23 21 15 / 0.04), 0 2px 6px -1px rgb(23 21 15 / 0.02);
-  --shadow-hover: 0 16px 36px -4px rgb(23 21 15 / 0.08), 0 4px 12px -2px rgb(23 21 15 / 0.03);
-  --shadow-floating: 0 24px 48px -8px rgb(23 21 15 / 0.14);
+  /* Elevation is printed, not blurred: plates sit flat and cast a hard offset when you reach for them.
+     Only genuinely floating things (modals, drawers, menus) get a soft shadow. */
+  --shadow-resting: none;
+  --shadow-hover: 0.5rem 0.5rem 0 -1px rgb(23 21 15 / 0.07);
+  --shadow-floating: 0 24px 48px -8px rgb(23 21 15 / 0.18);
   --shadow-focus: 0 0 0 3px rgb(251 184 23 / 0.15); /* amber halo on focused fields */
 
   --blur-frost: 16px;

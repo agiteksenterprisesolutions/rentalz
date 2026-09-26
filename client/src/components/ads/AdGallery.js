@@ -10,7 +10,7 @@ export default function AdGallery({ photos, title }) {
 
   if (!photos.length) {
     return (
-      <div className="card-media flex aspect-[4/3] items-center justify-center text-neutral-400">
+      <div className="card-media flex aspect-3/2 items-center justify-center text-neutral-400">
         <ImageOff aria-hidden="true" className="size-10" />
       </div>
     );
@@ -18,7 +18,8 @@ export default function AdGallery({ photos, title }) {
 
   return (
     <div className="flex flex-col gap-space-sm">
-      <div className="relative aspect-[4/3] overflow-hidden rounded-2xl border border-neutral-200 bg-white">
+      {/* A photographic well rather than a white box: whatever the photo's shape, the frame reads as one plate. */}
+      <div className="card-media aspect-3/2">
         <Image
           key={photos[active].id}
           src={photos[active].url}
@@ -38,7 +39,7 @@ export default function AdGallery({ photos, title }) {
                 onClick={() => setActive(i)}
                 aria-label={`Show photo ${i + 1}`}
                 aria-current={i === active}
-                className={`relative block size-20 overflow-hidden rounded-xl border-2 bg-white transition-colors ${i === active ? "border-amber" : "border-neutral-200 hover:border-outline-variant"}`}
+                className={`relative block size-20 overflow-hidden rounded-control border-2 bg-white transition-colors ${i === active ? "border-amber" : "border-neutral-200 hover:border-outline-variant"}`}
               >
                 <Image src={photo.url} alt="" fill sizes="80px" className="object-cover" />
               </button>
