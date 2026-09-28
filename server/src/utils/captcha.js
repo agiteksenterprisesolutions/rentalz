@@ -19,3 +19,5 @@ export const verifyTurnstile = async (token, ip) => {
     if (!body.success) throw ApiError.badRequest("Captcha verification failed");
     return true;
 };
+
+

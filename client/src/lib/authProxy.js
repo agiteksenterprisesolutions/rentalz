@@ -44,6 +44,13 @@ export function getAuthCookieHeader(cookieStore) {
         .join("; ");
 }
 
+// Matches cookieOptions() on the API (server/src/utils/helper.js) — set the SAME value there and here. Needed
+// whenever the frontend and API are sibling subdomains (beta.example.com / api.example.com), since browser JS on
+// the frontend calls the API directly (see src/api/api.js) and a cookie with no Domain attribute is host-only:
+// visible only to whichever single host set it, even to a same-site sibling. Leave unset for local dev, where
+// the frontend and API are different hosts (localhost / 127.0.0.1) that share no such domain at all.
+const COOKIE_DOMAIN = process.env.COOKIE_DOMAIN || undefined;
+
 // Copy the API's Set-Cookie auth cookies onto the Next.js (browser-facing) domain
 export async function applyAuthCookiesFromResponse(response) {
     const cookieStore = await cookies();
@@ -57,6 +64,7 @@ export async function applyAuthCookiesFromResponse(response) {
             secure: process.env.NODE_ENV === "production",
             sameSite: "lax",
             path: "/",
+            domain: COOKIE_DOMAIN,
             ...(cookie.options.maxAge != null && { maxAge: cookie.options.maxAge }),
         });
     }
@@ -64,7 +72,9 @@ export async function applyAuthCookiesFromResponse(response) {
 
 export async function clearAuthCookies() {
     const cookieStore = await cookies();
-    for (const name of AUTH_COOKIE_NAMES) cookieStore.delete(name);
+    // A delete has to repeat the same domain/path the cookie was set with, or the browser sees it as clearing a
+    // different (host-only) cookie and leaves the real, domain-scoped one behind.
+    for (const name of AUTH_COOKIE_NAMES) cookieStore.delete({ name, path: "/", domain: COOKIE_DOMAIN });
 }
 
 export async function proxyAuthRequest({ path, method = "POST", body = null, forwardCookies = false }) {

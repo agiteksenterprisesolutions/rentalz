@@ -6,23 +6,12 @@ import { useSyncExternalStore } from "react";
 const root = () => document.documentElement;
 const getTheme = () => (root().dataset.theme === "dark" ? "dark" : "light");
 
-// The theme lives on <html data-theme>. This store lets React read it and re-render when it changes,
-// including when the visitor never chose and the operating system switches between light and dark.
+// The theme lives on <html data-theme>. This store lets React read it and re-render when it changes.
+// Light is the default regardless of the visitor's system setting (see THEME_SCRIPT in app/layout.js);
+// dark only ever applies once someone has actually pressed this toggle.
 const subscribe = (notify) => {
-  const system = window.matchMedia("(prefers-color-scheme: dark)");
-  const onSystemChange = () => {
-    let saved = null;
-    try { saved = localStorage.getItem("theme"); } catch {}
-    if (saved === "light" || saved === "dark") return; // an explicit choice wins over the system setting
-    root().dataset.theme = system.matches ? "dark" : "light";
-    notify();
-  };
-  system.addEventListener("change", onSystemChange);
   window.addEventListener("themechange", notify);
-  return () => {
-    system.removeEventListener("change", onSystemChange);
-    window.removeEventListener("themechange", notify);
-  };
+  return () => window.removeEventListener("themechange", notify);
 };
 
 export default function ThemeToggle() {

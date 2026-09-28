@@ -68,6 +68,11 @@ export const cookieOptions = () => ({
     httpOnly: true,
     secure: env().NODE_ENV === "production",
     sameSite: env().NODE_ENV === "production" ? "none" : "lax",
+    // Set only when the API and frontend are on sibling subdomains of the same site (e.g. api.example.com and
+    // app.example.com both need COOKIE_DOMAIN=.example.com). Without it a cookie is host-only: visible to the
+    // exact host that set it and nowhere else, even a same-site sibling. Unset locally, where frontend and API
+    // are different hosts (localhost / 127.0.0.1) that share no such domain at all.
+    ...(process.env.COOKIE_DOMAIN && { domain: process.env.COOKIE_DOMAIN }),
 });
 
 export const setAuthCookies = (res, accessToken, refreshToken, refreshMaxAge) => {

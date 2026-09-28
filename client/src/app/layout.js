@@ -42,7 +42,9 @@ export const viewport = {
 };
 
 // Runs before the first paint so the saved (or system) theme is applied without a flash of the wrong one.
-const THEME_SCRIPT = `(function(){try{var t=localStorage.getItem("theme");if(t!=="light"&&t!=="dark"){t=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light"}document.documentElement.dataset.theme=t}catch(e){}})()`;
+// Light is the site's default regardless of the visitor's system setting; dark only applies once someone
+// has actually chosen it here (ThemeToggle), which is what the saved localStorage value means.
+const THEME_SCRIPT = `(function(){try{var t=localStorage.getItem("theme");document.documentElement.dataset.theme=t==="dark"?"dark":"light"}catch(e){}})()`;
 
 export default function RootLayout({ children }) {
   return (
