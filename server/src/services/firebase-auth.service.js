@@ -39,13 +39,27 @@ export const verifyFirebaseIdToken = async (idToken) => {
     const cert = decodedHeader?.kid && (await fetchCerts())[decodedHeader.kid];
     if (!cert) throw new jwt.JsonWebTokenError("Unknown signing key");
 
-    return jwt.verify(idToken, cert, {
-        algorithms: ["RS256"],
-        audience: projectId,
-        issuer: `${ISSUER_PREFIX}${projectId}`,
-    });
+    try {
+        return jwt.verify(idToken, cert, {
+            algorithms: ["RS256"],
+            audience: projectId,
+            issuer: `${ISSUER_PREFIX}${projectId}`,
+            // A little slack for the server clock being a few seconds off real time (common on shared/budget
+            // hosts without NTP), so a token that is genuinely fresh doesn't get rejected as "not yet valid"
+            // or "expired" over a few seconds of drift. Firebase ID tokens are good for an hour, so this is
+            // a rounding error against that, not a meaningful weakening of the expiry check.
+            clockTolerance: 30,
+        });
+    } catch (error) {
+        // The public message is deliberately generic (see globalErrorHandler); this is what actually failed,
+        // for whoever is reading the API's own logs — wrong/missing FIREBASE_PROJECT_ID (audience/issuer
+        // mismatch), real clock drift beyond the tolerance above, or a genuinely invalid token.
+        console.error(`Firebase ID token rejected: ${error.message} (project configured: ${projectId})`);
+        throw error;
+    }
 };
 
 /** The Google account id to store as `providerId`: the real Google `sub`, not Firebase's own internal uid. */
 export const googleSubOf = (decoded) => decoded.firebase?.identities?.["google.com"]?.[0] || decoded.sub;
+
 
