@@ -3,7 +3,7 @@ import {
     changePassword, confirmEmailChange, forgotPassword, loginUser, logoutUser, me,
     refreshToken, registerUser, resendVerification, resetPassword, verifyEmail,
 } from "../controllers/auth.controller.js";
-import { exchangeSocialCode, socialCallback, socialProviders, startSocialLogin } from "../controllers/social-auth.controller.js";
+import { exchangeSocialCode, firebaseSignIn, socialCallback, socialProviders, startSocialLogin } from "../controllers/social-auth.controller.js";
 import { verifyUser } from "../middleware/verify.middleware.js";
 import { authLimiter } from "../utils/rate-limiter.js";
 
@@ -25,6 +25,7 @@ authRouter.post("/change-password", verifyUser, changePassword);
 // Sign in with Google / Facebook. The provider routes come last so they never shadow the fixed ones above (/me, /login ...).
 authRouter.get("/providers", socialProviders);
 authRouter.post("/social/exchange", authLimiter, exchangeSocialCode);
+authRouter.post("/firebase", authLimiter, firebaseSignIn);
 authRouter.get("/:provider", startSocialLogin);
 authRouter.get("/:provider/callback", socialCallback);
 

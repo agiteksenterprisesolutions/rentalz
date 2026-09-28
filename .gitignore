@@ -6,3 +6,10 @@ node_modules/
 out/
 *.log
 .DS_Store
+
+# Database dumps: contain real user data (emails, password hashes), never commit
+docs/db-exports/
+
+# Firebase / Google service-account keys: full admin access to the project, never commit
+*firebase-adminsdk*.json
+*service-account*.json

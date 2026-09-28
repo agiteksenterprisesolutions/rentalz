@@ -45,6 +45,21 @@ export const useAuthStore = create(
                 }
             },
 
+            // Google sign-in via Firebase: the caller already has an ID token from signInWithPopup(); this just
+            // trades it for our own session, the same way login() trades an email and password for one.
+            googleLogin: async (idToken) => {
+                set({ isLoading: true, error: null });
+                try {
+                    const { data } = await authApi.post("/firebase", { idToken });
+                    const { user, permissions } = data.data;
+                    set({ user, role: user.role, permissions, isAuthenticated: true, isLoading: false });
+                    return { ok: true };
+                } catch (e) {
+                    set({ isLoading: false, error: errorMessage(e) });
+                    return { ok: false, message: errorMessage(e), code: errorCode(e) };
+                }
+            },
+
             logout: async () => {
                 try { await authApi.post("/logout"); } finally { set({ ...initial }); useFavouriteStore.getState().clear(); useCartStore.getState().clearLocal(); }
             },

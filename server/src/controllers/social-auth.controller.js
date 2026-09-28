@@ -2,6 +2,7 @@ import { timingSafeEqual } from "node:crypto";
 import prisma from "../config/prisma.js";
 import { UserStatus } from "../generated/prisma/enums.ts";
 import { getAdCredits } from "../services/credit.service.js";
+import { googleSubOf, verifyFirebaseIdToken } from "../services/firebase-auth.service.js";
 import { buildAuthUrl, configuredProviders, consumeLoginCode, createLoginCode, fetchProfile, isConfigured, isProvider, newState, resolveUser } from "../services/social-auth.service.js";
 import { apiResponse, asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/error.js";
@@ -77,6 +78,22 @@ export const exchangeSocialCode = asyncHandler(async (req, res) => {
     const userId = await consumeLoginCode(req.body?.code);
     const user = await prisma.user.findFirst({ where: { id: userId, deletedAt: null } });
     if (!user || user.status !== UserStatus.ACTIVE || !user.emailVerified) throw ApiError.unauthorized("This account cannot sign in");
+
+    await startSession(req, res, user);
+    return apiResponse(res, 200, true, "Logged in successfully", {
+        user: { ...getSafeUser(user), adCredits: await getAdCredits(user.id), avatarUrl: await avatarUrlOf(user.id) },
+        permissions: await getPermissions(user.role),
+    });
+});
+
+// POST /auth/firebase { idToken }: sign in with a Firebase ID token from a client-side popup (currently Google
+// only). No redirect dance and no state cookie needed here — the popup flow is already same-origin, so there is
+// nothing for a state cookie to protect against. Reuses the same account-resolution rules as the redirect-based
+// flow above, so a person who signed in with either method still lands on one account.
+export const firebaseSignIn = asyncHandler(async (req, res) => {
+    const decoded = await verifyFirebaseIdToken(req.body?.idToken);
+    const provider = decoded.firebase?.sign_in_provider === "facebook.com" ? "facebook" : "google";
+    const user = await resolveUser(provider, { id: googleSubOf(decoded), email: decoded.email, emailVerified: decoded.email_verified === true, name: decoded.name });
 
     await startSession(req, res, user);
     return apiResponse(res, 200, true, "Logged in successfully", {

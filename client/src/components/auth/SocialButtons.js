@@ -1,4 +1,12 @@
-const API = process.env.NEXT_PUBLIC_API_BASE_URL;
+"use client";
+
+import { signInWithPopup } from "firebase/auth";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { firebaseAuth, googleProvider } from "@/lib/firebase";
+import { safeNextPath } from "@/lib/redirect";
+import { useAuthStore } from "@/store/authStore";
+import Notice from "./Notice";
 
 const GoogleIcon = () => (
   <svg aria-hidden="true" viewBox="0 0 24 24" className="size-5">
@@ -8,35 +16,46 @@ const GoogleIcon = () => (
     <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.31 0 3.26 2.7 1.29 6.62l3.98 3.09C6.22 6.86 8.87 4.75 12 4.75z" />
   </svg>
 );
-const FacebookIcon = () => (
-  <svg aria-hidden="true" viewBox="0 0 24 24" className="size-5">
-    <path fill="#1877F2" d="M24 12.07C24 5.4 18.63 0 12 0S0 5.4 0 12.07C0 18.1 4.39 23.1 10.13 24v-8.44H7.08v-3.49h3.05V9.41c0-3.02 1.79-4.7 4.53-4.7 1.31 0 2.68.24 2.68.24v2.97h-1.51c-1.49 0-1.96.93-1.96 1.89v2.26h3.33l-.53 3.49h-2.8V24C19.61 23.1 24 18.1 24 12.07z" />
-  </svg>
-);
 
-const PROVIDERS = [
-  { id: "google", label: "Google", Icon: GoogleIcon },
-  { id: "facebook", label: "Facebook", Icon: FacebookIcon },
-];
+// "Continue with Google": signs in with Firebase's own popup (no redirect through our API and back), then
+// trades the ID token it returns for our session cookies via authStore.googleLogin().
+//
+// Facebook is deliberately not shown yet — the account-resolution rules already support it (see
+// server/src/services/social-auth.service.js and firebaseSignIn), it just isn't wired up on this side yet.
+// Bringing it back is a Facebook provider + a second button here, nothing more.
+export default function SocialButtons({ next, verb = "Continue" }) {
+  const router = useRouter();
+  const target = safeNextPath(next);
+  const { googleLogin } = useAuthStore();
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState(null);
 
-// "Continue with Google / Facebook" buttons. They are plain links: the whole sign-in happens on the API and the
-// provider's own pages, then the person lands back on the site signed in. Only providers the API has keys for are shown.
-export default function SocialButtons({ providers, next, verb = "Continue" }) {
-  const enabled = PROVIDERS.filter((p) => providers?.[p.id]);
-  if (!enabled.length) return null;
+  const onClick = async () => {
+    setBusy(true);
+    setError(null);
+    try {
+      const credential = await signInWithPopup(firebaseAuth, googleProvider);
+      const idToken = await credential.user.getIdToken();
+      const result = await googleLogin(idToken);
+      if (result.ok) return router.replace(target);
+      setError(result.message);
+    } catch (err) {
+      // The visitor closing the popup or clicking away isn't an error worth showing them.
+      if (err?.code !== "auth/popup-closed-by-user" && err?.code !== "auth/cancelled-popup-request") {
+        setError("Google sign-in failed. Please try again.");
+      }
+    } finally {
+      setBusy(false);
+    }
+  };
 
-  // Side by side with just the brand name when there are two (they are still announced in full), one wide button otherwise.
-  const pair = enabled.length > 1;
   return (
     <div className="flex flex-col gap-space-sm">
-      <div className={pair ? "grid grid-cols-2 gap-space-sm" : "flex flex-col"}>
-        {enabled.map(({ id, label, Icon }) => (
-          <a key={id} href={`${API}/auth/${id}${next ? `?next=${encodeURIComponent(next)}` : ""}`} aria-label={`${verb} with ${label}`} className="btn btn-ghost w-full justify-center gap-2 border-neutral-200 bg-white">
-            <Icon />
-            {pair ? label : `${verb} with ${label}`}
-          </a>
-        ))}
-      </div>
+      <Notice>{error}</Notice>
+      <button type="button" onClick={onClick} disabled={busy} aria-label={`${verb} with Google`} className="btn btn-ghost w-full justify-center gap-2 border-neutral-200 bg-white">
+        <GoogleIcon />
+        {busy ? "Continuing…" : `${verb} with Google`}
+      </button>
       <div className="flex items-center gap-3" role="separator" aria-label="or">
         <span className="h-px flex-1 bg-neutral-200" />
         <span className="type-label-mono-md text-neutral-700 uppercase">or with email</span>
