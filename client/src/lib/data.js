@@ -54,9 +54,14 @@ export const getCategory = async (slug) => {
 /** Which social sign-in buttons to show: { google: bool, facebook: bool }. */
 export const getSocialProviders = () => load({ url: "/auth/providers", revalidate: FIVE_MINUTES }, { google: false, facebook: false });
 
+// Title-cases a slug for the rare case a candidate's category lookup fails: "earth-moving" -> "Earth Moving".
+const titleize = (slug) => slug.split("-").map((word) => word[0].toUpperCase() + word.slice(1)).join(" ");
+
 /**
  * Slides for the home hero: one per machine category that has live listings, with its title. If no candidate category
- * has listings yet, the first one is still shown so the hero is never empty.
+ * has listings yet, the first one is still shown so the hero is never empty. A candidate is kept even if its own
+ * lookup fails (API hiccup, or unreachable at build time) — it falls back to a title made from its slug, rather
+ * than being dropped, since dropping every candidate at once would leave nothing for the hero to show at all.
  */
 export const getHeroSlides = async () => {
   const slides = await Promise.all(
@@ -65,11 +70,9 @@ export const getHeroSlides = async () => {
         getCategory(candidate.slug),
         load({ url: "/ads", params: { category: candidate.slug, limit: 1 }, revalidate: FIVE_MINUTES }, null),
       ]);
-      if (!category) return null;
-      return { ...candidate, title: category.title, total: found?.pagination?.total ?? 0 };
+      return { ...candidate, title: category?.title ?? titleize(candidate.slug), total: found?.pagination?.total ?? 0 };
     }),
   );
-  const available = slides.filter(Boolean);
-  const withListings = available.filter((slide) => slide.total > 0).slice(0, MAX_HERO_SLIDES);
-  return withListings.length ? withListings : available.slice(0, 1);
+  const withListings = slides.filter((slide) => slide.total > 0).slice(0, MAX_HERO_SLIDES);
+  return withListings.length ? withListings : slides.slice(0, 1);
 };

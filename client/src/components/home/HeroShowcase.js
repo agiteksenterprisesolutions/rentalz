@@ -14,7 +14,7 @@ export default function HeroShowcase({ slides, intro }) {
   const [hovering, setHovering] = useState(false);
   const [manual, setManual] = useState(false);
   const many = slides.length > 1;
-  const slide = slides[index];
+  const slide = slides[index] ?? slides[0];
 
   // Turns to the next machine by itself, unless the visitor chose one with the dots, is pointing at or focused inside the hero, or prefers reduced motion.
   useEffect(() => {
@@ -29,6 +29,17 @@ export default function HeroShowcase({ slides, intro }) {
     setManual(true);
     setIndex(i);
   };
+
+  // Belt and suspenders: getHeroSlides() should never hand back an empty array, but if it ever does (a future
+  // change to that fallback, say), fall back to plain text rather than crash the whole page on `slide.slug`.
+  if (!slide) {
+    return (
+      <div className="container-page flex flex-col items-start gap-space-md py-space-2xl xl:flex-1 xl:justify-center xl:pt-14 xl:pb-space-sm">
+        {intro}
+        <Link href="/ads" className="btn btn-primary mt-space-md">Browse all listings</Link>
+      </div>
+    );
+  }
 
   return (
     <>
