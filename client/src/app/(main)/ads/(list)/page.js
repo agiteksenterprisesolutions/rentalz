@@ -1,8 +1,12 @@
 import { SearchX } from "lucide-react";
 import Link from "next/link";
+import { Suspense } from "react";
 import AdCard from "@/components/ads/AdCard";
 import SaveSearchButton from "@/components/ads/SaveSearchButton";
-import AdFilters, { SORT_OPTIONS } from "@/components/ads/AdFilters";
+import AdFilters from "@/components/ads/AdFilters";
+import { FilterTransitionProvider } from "@/components/ads/FilterTransitionProvider";
+import { SORT_OPTIONS } from "@/components/ads/filterOptions";
+import ResultsPendingOverlay from "@/components/ads/ResultsPendingOverlay";
 import Pagination from "@/components/ui/Pagination";
 import { getCategoryTree, getCities, getMakes, getSeoSettings, searchAds } from "@/lib/data";
 import { buildMetadata } from "@/lib/seo";
@@ -80,29 +84,35 @@ export default async function AdsPage({ searchParams }) {
         )}
       </header>
 
-      <div className="grid gap-space-lg lg:grid-cols-[18rem_1fr] lg:items-start">
-        <AdFilters values={filters} cities={cities} categories={categories} makes={makes} activeCount={activeCount} />
+      <FilterTransitionProvider>
+        <div className="grid gap-space-lg lg:grid-cols-[18rem_1fr] lg:items-start">
+          <Suspense fallback={null}>
+            <AdFilters cities={cities} categories={categories} makes={makes} />
+          </Suspense>
 
-        <section aria-label="Search results">
-          {items.length > 0 ? (
-            <>
-              <div className="grid gap-space-md sm:grid-cols-2 xl:grid-cols-3">
-                {items.map((ad, i) => (
-                  <AdCard key={ad.id} ad={ad} priority={i < 3} />
-                ))}
-              </div>
-              <Pagination page={pagination.page} totalPages={pagination.totalPages} buildHref={buildHref} />
-            </>
-          ) : (
-            <div className="card flex flex-col items-center gap-space-md p-space-xl text-center">
-              <SearchX aria-hidden="true" className="size-10 text-neutral-400" />
-              <h2 className="type-headline-md">Nothing found</h2>
-              <p className="type-body-md max-w-md text-neutral-700">Try a broader keyword, remove a filter, or browse every listing.</p>
-              <Link href="/ads" className="btn btn-primary">Clear all filters</Link>
-            </div>
-          )}
-        </section>
-      </div>
+          <ResultsPendingOverlay>
+            <section aria-label="Search results">
+              {items.length > 0 ? (
+                <>
+                  <div className="grid gap-space-md sm:grid-cols-2 xl:grid-cols-3">
+                    {items.map((ad, i) => (
+                      <AdCard key={ad.id} ad={ad} priority={i < 3} />
+                    ))}
+                  </div>
+                  <Pagination page={pagination.page} totalPages={pagination.totalPages} buildHref={buildHref} />
+                </>
+              ) : (
+                <div className="card flex flex-col items-center gap-space-md p-space-xl text-center">
+                  <SearchX aria-hidden="true" className="size-10 text-neutral-400" />
+                  <h2 className="type-headline-md">Nothing found</h2>
+                  <p className="type-body-md max-w-md text-neutral-700">Try a broader keyword, remove a filter, or browse every listing.</p>
+                  <Link href="/ads" className="btn btn-primary">Clear all filters</Link>
+                </div>
+              )}
+            </section>
+          </ResultsPendingOverlay>
+        </div>
+      </FilterTransitionProvider>
     </div>
   );
 }

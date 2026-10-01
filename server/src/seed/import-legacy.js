@@ -200,7 +200,10 @@ const importUsers = async () => {
 
 // ── ads ──────────────────────────────────────────────────────
 const yesNo = (v) => (v === 1 ? OperatorOption.WITH_OPERATOR : v === 2 ? OperatorOption.WITHOUT_OPERATOR : null);
-const AD_TYPES = { rent: AdType.RENT, sell: AdType.SELL, premium: AdType.PREMIUM, rest: AdType.PRODUCT };
+const AD_TYPES = { rent: AdType.RENT, sell: AdType.SELL, premium: AdType.PREMIUM };
+// Legacy rows with no usable add_type ("rest") used to land in a catch-all PRODUCT type, which the UI then showed
+// as a meaningless "Product" tag. Infer rent vs sale instead: a daily/weekly/monthly rate means it was a rental.
+const inferredType = (a) => ([a.d_price, a.w_price, a.m_price].map(toNum).some((n) => n > 0) ? AdType.RENT : AdType.SELL);
 
 const importAds = async (userMap) => {
     const data = await rows("select * from adds order by id");
@@ -218,7 +221,7 @@ const importAds = async (userMap) => {
         const fields = {
             userId,
             creatorId: userId,
-            type: AD_TYPES[a.add_type] ?? (a.is_product === "Yes" ? AdType.PRODUCT : AdType.RENT),
+            type: AD_TYPES[a.add_type] ?? inferredType(a),
             status: a.status === 1 ? AdStatus.APPROVED : AdStatus.PENDING,
             title: clip(fixText(a.title), 255) ?? "Untitled",
             description: a.description || null,

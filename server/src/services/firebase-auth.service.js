@@ -32,7 +32,10 @@ const fetchCerts = async () => {
 export const verifyFirebaseIdToken = async (idToken) => {
     if (!idToken || typeof idToken !== "string") throw new jwt.JsonWebTokenError("Missing ID token");
 
-    const projectId = process.env.FIREBASE_PROJECT_ID;
+    // Firebase project ids are always lowercase, so a token's real `aud` claim always is too. Lowercasing the
+    // configured value guards against exactly the kind of env-var typo (THERENTALZCOM vs therentalzcom) that
+    // otherwise fails every sign-in with "jwt audience invalid" and nothing pointing at why.
+    const projectId = process.env.FIREBASE_PROJECT_ID?.toLowerCase();
     if (!projectId) throw new Error("FIREBASE_PROJECT_ID is not configured");
 
     const decodedHeader = jwt.decode(idToken, { complete: true })?.header;
@@ -61,5 +64,6 @@ export const verifyFirebaseIdToken = async (idToken) => {
 
 /** The Google account id to store as `providerId`: the real Google `sub`, not Firebase's own internal uid. */
 export const googleSubOf = (decoded) => decoded.firebase?.identities?.["google.com"]?.[0] || decoded.sub;
+
 
 
